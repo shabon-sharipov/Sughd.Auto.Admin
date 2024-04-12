@@ -1,0 +1,62 @@
+﻿@page "/AddCar"
+@using MiddlewareBetweenApis.RequestModels
+@inject ICarService _carService
+@* <MudStack Row> *@
+@*     <MudCard> *@
+@*         <MudCardContent> *@
+@*             <MudText Align="Align.Center" Class="mb-n4">Car Registration</MudText> *@
+@*             <MudForm @onsubmit="SaveCar"> *@
+@*                 <MudTextField @bind-Value="_carRequestModel.VINCode" T="string" Label="VINCode" /> *@
+@*                 <MudTextField @bind-Value="_carRequestModel.DateOfPablisher" T="string" Label="Год выпуска" /> *@
+@*                 <MudNumericField @bind-Value="_carRequestModel.Price" T="decimal" Label="Цена" /> *@
+@*                 <MudNumericField @bind-Value="_carRequestModel.EngineCapacity" T="decimal" Label="Оъем двигателя" /> *@
+@*                 <MudNumericField @bind-Value="_carRequestModel.Mileage" T="decimal" Label="Пробег" /> *@
+@*                 <MudSwitch @bind-Value="_carRequestModel.IsRastamogeno" T="bool" Label="Растаможен в РТ" /> *@
+@*                 <MudSwitch @bind-Value="_carRequestModel.IsActive" T="bool" Label="Астиве" /> *@
+@*                 <MudTextField @bind-Value="_carRequestModel.FuelType" T="string" Label="Тип топлива" /> *@
+@*                 <MudTextField @bind-Value="_carRequestModel.Transmission" T="string" Label="Коробка Передача" /> *@
+@*                 <MudTextField @bind-Value="_carRequestModel.CarBody" T="string" Label="Кузов" /> *@
+@*                 <MudNumericField @bind-Value="_carRequestModel.UserId" T="int" Label="UserID" /> *@
+@*                 <MudNumericField @bind-Value="_carRequestModel.MarkaId" T="long" Label="MarkId"/> *@
+@*                 <MudNumericField @bind-Value="_carRequestModel.ModelId" T="long" Label="ModelId"/> *@
+@*             </MudForm> *@
+@*             <MudCardActions> *@
+@*                  *@
+@*             </MudCardActions> *@
+@*                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await SaveCar())">Order</MudButton> *@
+@*         </MudCardContent> *@
+@*     </MudCard> *@
+@* </MudStack> *@
+
+<MudCard>
+	<MudForm Model="@model">
+		<MudCardContent>
+				<MudTextField @bind-Value="model.Price"                              
+							  For="@(() => model.Price)"
+							  Immediate="true"
+							  Label="Name" />
+
+				<MudTextField @bind-Value="model.Mileage"
+							  For="@(() => model.Mileage)"
+							  Immediate="true"
+							  Label="Email" />
+        </MudCardContent>
+		<MudCardContent Class="pa-0">
+		</MudCardContent>
+	</MudForm>
+    <MudCardActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await SaveCar())">Order</MudButton>
+    </MudCardActions>
+</MudCard>
+
+
+@code{
+
+    private CarRequestModel model = new CarRequestModel();
+
+    private async Task SaveCar()
+    {
+        await _carService.Post(model);
+    }
+
+}   
