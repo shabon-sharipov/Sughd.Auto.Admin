@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using MiddlewareBetweenApis.Services;
 using MudBlazor.Services;
 using Sughd.Auto.Admin;
+using Sughd.Auto.Admin.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

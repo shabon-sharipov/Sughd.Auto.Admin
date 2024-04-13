@@ -1,7 +1,9 @@
-﻿namespace MiddlewareBetweenApis.RequestModels;
+﻿namespace Sughd.Auto.Admin.Services.ResponseModels;
 
-public class CarRequestModel
+public class CarResponseModels
 {
+    public long Id { get; set; }
+    
     public string VINCode { get; set; } = string.Empty;
 
     public string DateOfPablisher { get; set; } = string.Empty;
