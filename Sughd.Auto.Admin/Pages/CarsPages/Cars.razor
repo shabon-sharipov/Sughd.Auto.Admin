@@ -1,0 +1,117 @@
+﻿@page "/Cars"
+@using System.Net.Http.Json
+@inject HttpClient httpClient
+
+<MudTable Items="@_cars" Hover="true" SortLabel="Sort By" CanCancelEdit="@canCancelEdit" Loading="@_loading" Filter="new Func<CarResponseModels,bool>(SearchByName)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Cars</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField></ToolBarContent>
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Id)">Id</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.CarNumber)">CarNumber</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel Enabled="@enabled" SortBy="new Func<CarResponseModels, object>(x => x.Marka.Name)">Marka</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<CarResponseModels, object>(x => x.Model.Name)">Model</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.VINCode)">VINCode</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.DateOfPablisher)">DateOfPablisher</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Price)">Price</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.EngineCapacity)">EngineCapacity</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Mileage)">Mileage</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.IsRastamogeno)">IsRastamogeno</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Images)">Images</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.FuelType)">FuelType</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Transmission)">Transmission</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.IsActive)">IsActive</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.CarBody)">CarBody</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.UserName)">UserName</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Color)">Color</MudTableSortLabel>
+        </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Id</MudTd>
+        <MudTd DataLabel="Nr">@context.CarNumber</MudTd>
+        <MudTd DataLabel="Sign">@context.Marka.Name</MudTd>
+        <MudTd DataLabel="Name">@context.Model.Name</MudTd>
+        <MudTd DataLabel="Position">@context.VINCode</MudTd>
+        <MudTd DataLabel="Molar mass">@context.DateOfPablisher</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Price</MudTd>
+        <MudTd DataLabel="Molar mass">@context.EngineCapacity</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Mileage</MudTd>
+        <MudTd DataLabel="Molar mass">@context.IsRastamogeno</MudTd>
+        <MudTd DataLabel="Molar mass">@context.IsActive</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Images</MudTd>
+        <MudTd DataLabel="Molar mass">@context.FuelType</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Transmission</MudTd>
+        <MudTd DataLabel="Molar mass">@context.CarBody</MudTd>
+        <MudTd DataLabel="Molar mass">@context.UserName</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Color</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private bool enabled = true;
+    private string searchTerm = "";
+    private bool _loading = true;
+    private bool canCancelEdit = false;
+    private List<CarResponseModels> _cars = new List<CarResponseModels>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _cars = await _carService.Get(100, 0);
+        _loading = false;
+    }
+
+    private bool SearchByName(CarResponseModels carResponseModels)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return true;
+
+        if (carResponseModels.CarNumber.Contains(searchTerm))
+        return true;
+        
+            if (carResponseModels.UserName.Contains(searchTerm))
+                return true;
+            if (carResponseModels.Model.Name.Contains(searchTerm))
+                return true;
+            if (carResponseModels.Marka.Name.Contains(searchTerm))
+                return true;
+
+        return false;
+    }
+}

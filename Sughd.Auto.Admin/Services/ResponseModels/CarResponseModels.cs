@@ -7,7 +7,8 @@ public class CarResponseModels
     public string VINCode { get; set; } = string.Empty;
 
     public string DateOfPablisher { get; set; } = string.Empty;
-
+    
+    public string CarNumber { get; set; } = string.Empty;
     public decimal Price { get; set; }
 
     public decimal EngineCapacity { get; set; }
@@ -27,9 +28,12 @@ public class CarResponseModels
     public string CarBody { get; set; } = string.Empty;
 
     public int UserId { get; set; }
+    public string UserName { get; set; }
     
+    public CarMarkaResponsModel Marka { get; set; }
     public long MarkaId { get; set; }
 
+    public CarModelResponseModel Model { get; set; }
     public long ModelId { get; set; }
 
     public string Color { get; set; } = string.Empty;

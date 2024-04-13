@@ -1,0 +1,180 @@
+﻿@page "/AddCar"
+
+<MudStack Row>
+    <MudCard>
+        <MudCardContent>
+            <MudText Align="Align.Center" Class="mb-n4">Car Registration</MudText>
+            <MudForm>
+                <MudTextField @bind-Value="_model.VINCode"
+                              For="@(() => _model.VINCode)"
+                              Immediate="true"
+                              Label="VINCode"
+                              Id =""/>
+                <MudTextField @bind-Value="_model.CarNumber"
+                              For="@(() => _model.CarNumber)"
+                              Immediate="true"
+                              Label="Номер автомобил"
+                              Id=""/>
+                <MudTextField @bind-Value="_model.DateOfPablisher"
+                              For="@(() => _model.DateOfPablisher)"
+                              Immediate="true"
+                              Label="Год выпуска"
+                              Id =""/>
+                <MudTextField @bind-Value="_model.Price"
+                              For="@(() => _model.Price)"
+                              Immediate="true"
+                              Label="Цена"
+                              Id =""/>
+                <MudTextField @bind-Value="_model.EngineCapacity"
+                              For="@(() => _model.EngineCapacity)"
+                              Immediate="true"
+                              Label="Оъем двигателя"
+                              Id =""/>
+                <MudTextField @bind-Value="_model.Mileage"
+                              For="@(() => _model.Mileage)"
+                              Immediate="true"
+                              Label="Пробег"
+                              Id =""/>
+                
+                <MudSwitch @bind-Value="_model.IsActive" Color="Color.Info" T="bool" Label="Active"/>
+                <MudSwitch @bind-Value="_model.IsRastamogeno" Color="Color.Info" T="bool" Label="Растаможен в РТ"/>
+
+                <MudSelect Label="Тип топлива" @bind-Value="_model.FuelType" Variant="Variant.Outlined" T="string" Id ="">
+                    @foreach (var fuelType in _fuelTypes)
+                    {
+                        <MudSelectItem Value="@fuelType">@fuelType</MudSelectItem>
+                    }
+                </MudSelect>
+                
+                <MudSelect Label="Коробка Передача" @bind-Value="_model.Transmission" Variant="Variant.Outlined" T="string" Id ="">
+                    @foreach (var transmission in _transmissions)
+                    {
+                        <MudSelectItem Value="@transmission">@transmission</MudSelectItem>
+                    }
+                </MudSelect>
+                
+                <MudSelect Label="Кузов" @bind-Value="_model.CarBody" Variant="Variant.Outlined"  T="string" Id ="">
+                    @foreach (var carBody in _carBodies)
+                    {
+                        <MudSelectItem Value="@carBody">@carBody</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect Label="Mark" @bind-Value="_model.MarkaId" Variant="Variant.Outlined" T="long" Id =""  
+                           onchange="@(GetModelByMarkaId(_model.MarkaId))">
+                    @foreach (var markaResponsModel in _carMarkaResponsModels)
+                    {
+                        <MudSelectItem Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect Label="Модел" @bind-Value="_model.ModelId" Variant="Variant.Outlined" T="long" Id="">
+                    @foreach (var modelResponseModel in _carModelResponseModels)
+                    {
+                        <MudSelectItem Value="@modelResponseModel.Id">@modelResponseModel.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                
+                <MudAutocomplete T="string" Label="User" @bind-Value="userName" SearchFunc="@SearchUser"/>
+                @foreach (var image in Images)
+                {
+                    <MudImage Src="@image" Width="350" Height="200" Alt="Mony the dog" Elevation="25" Class="rounded-lg"/>
+                }
+                
+                <MudTextField @bind-Value="_model.UserId"
+                              For="@(() => _model.UserId)"
+                              Immediate="true"
+                              Label="UserID"
+                              Id =""/>
+                <InputFile multiple OnChange="@GetImage"></InputFile>
+            </MudForm>
+            <MudCardActions>
+                <MudButton
+                    Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    Class="ml-auto"
+                    OnClick="@(async () => await SaveCar())">
+                    Order
+                </MudButton>
+            </MudCardActions>
+        </MudCardContent>
+    </MudCard>
+</MudStack>
+@code{
+    private CarRequestModel _model = new();
+    private List<string> _carBodies = new();
+    private List<string> _fuelTypes = new();
+    private List<string> _transmissions = new();
+    private List<CarMarkaResponsModel> _carMarkaResponsModels = new();
+    private List<CarModelResponseModel> _carModelResponseModels = new();
+    private List<string> Images = new();
+    private string userName;
+    private bool resetValueOnEmptyText;
+    private bool coerceText;
+    private bool coerceValue;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCarDetails();
+        await GetCarMarka();
+    }
+
+    private async Task SaveCar()
+    {
+        _model.Images = Images;
+        await _carService.Post(_model);
+    }
+
+    private async Task GetCarDetails()
+    {
+        var carGetCarDetails = await _carDetailsService.GetCarDetails();
+
+        _carBodies = (carGetCarDetails.TryGetValue("CarBody", out var detail)
+            ? JsonConvert.DeserializeObject<List<string>>(detail.ToString()!)
+            : null)!;
+
+        _fuelTypes = (carGetCarDetails.TryGetValue("FuelType", out var fuelType)
+            ? JsonConvert.DeserializeObject<List<string>>(fuelType.ToString()!)
+            : null)!;
+
+        _transmissions = (carGetCarDetails.TryGetValue("Transmission", out var transmission)
+            ? JsonConvert.DeserializeObject<List<string>>(transmission.ToString()!)
+            : null)!;
+    }
+
+    private async Task GetCarMarka()
+    {
+        _carMarkaResponsModels = await _carDetailsService.GetCarMarka();
+    }
+    
+    private async Task GetModelByMarkaId(long markaId)
+    {
+        if (markaId != 0)
+        {
+            _carModelResponseModels = await _carDetailsService.GetCarModelByMarkaId(markaId);
+        }
+    }
+
+    private async Task<IEnumerable<string>> SearchUser(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            return new List<string>();
+        }
+
+        return await _searchService.SearchByUserName(name);
+    }
+
+    private async Task GetImage(InputFileChangeEventArgs fileChangeEventArgs)
+    {
+        var maxAllowedSize = 2 * 1024 * 1024;
+        
+        foreach (var file in fileChangeEventArgs.GetMultipleFiles())
+        {
+            using var strem = file.OpenReadStream(maxAllowedSize);
+            using var ms = new MemoryStream();
+            await strem.CopyToAsync(ms);
+            Images.Add($"data:{file.ContentType}; base64, {Convert.ToBase64String(ms.ToArray())}");
+        }
+    }
+}

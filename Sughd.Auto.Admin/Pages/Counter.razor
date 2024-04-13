@@ -1,4 +1,7 @@
 ﻿@page "/counter"
+@using Sughd.Auto.Admin.Services
+@using Sughd.Auto.Admin.Services.RequestModels
+@inject ICarService ICarService;
 
 <PageTitle>Counter</PageTitle>
 
@@ -14,6 +17,7 @@
     private void IncrementCount()
     {
         currentCount++;
+        ICarService.Post(new CarRequestModel());
     }
 
 }

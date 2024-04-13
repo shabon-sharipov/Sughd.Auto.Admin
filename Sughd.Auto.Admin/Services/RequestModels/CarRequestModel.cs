@@ -17,6 +17,8 @@ public class CarRequestModel
     public List<string> Images { get; set; }
 
     public bool IsActive { get; set; }
+    
+    public string CarNumber { get; set; } = string.Empty;
 
     public string FuelType { get; set; } = string.Empty;
 

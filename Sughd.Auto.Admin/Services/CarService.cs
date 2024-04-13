@@ -1,4 +1,7 @@
 ﻿using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
+using Newtonsoft.Json;
 using Sughd.Auto.Admin.Services.RequestModels;
 using Sughd.Auto.Admin.Services.ResponseModels;
 
@@ -7,29 +10,29 @@ namespace Sughd.Auto.Admin.Services;
 public interface ICarService
 {
     Task<int> Post(CarRequestModel carRequestModel);
-    Task<List<CarResponseModels> ?> Get(CarRequestModel carRequestModel);
+    Task<List<CarResponseModels> ?> Get(int pageSize, int offSet);
 }
 
 public class CarService : ICarService
 {
-    // public async Task<int> Post(CarRequestModel carRequestModel)
-    // {
-    //     var response = await _httpClient.PostAsJsonAsync("http://localhost:5121/Car", carRequestModel);
-    //     response.EnsureSuccessStatusCode();
-    //     return await response.Content.ReadFromJsonAsync<int>();
-    // }
-    //
-    // public async Task<List<CarResponseModels> ?> Get(CarRequestModel carRequestModel)
-    // {
-    //     return await _httpClient.GetFromJsonAsync<List<CarResponseModels>>("http://localhost:5121/Car");
-    // }
-    public Task<int> Post(CarRequestModel carRequestModel)
+    private HttpClient _httpClient;
+
+    public CarService(HttpClient httpClient)
     {
-        throw new NotImplementedException();
+        _httpClient = httpClient;
     }
 
-    public Task<List<CarResponseModels>?> Get(CarRequestModel carRequestModel)
+    public async Task<int> Post(CarRequestModel carRequestModel)
+    { 
+        Console.WriteLine(JsonConvert.SerializeObject(carRequestModel));
+        var s = _httpClient.BaseAddress;
+        var s1 =  await _httpClient.PostAsJsonAsync("Car", carRequestModel);
+        Console.WriteLine(JsonConvert.SerializeObject(s1));
+        return 1;
+    }
+    
+    public async Task<List<CarResponseModels>?> Get(int pageSize, int offSet)
     {
-        throw new NotImplementedException();
+        return await _httpClient.GetFromJsonAsync<List<CarResponseModels>>($"Car/GetAll?pageSize={pageSize}&offSet={offSet}");
     }
 }
