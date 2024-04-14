@@ -5,7 +5,7 @@ namespace Sughd.Auto.Admin.Services;
 
 public interface ISearchService
 {
-    Task<IEnumerable<string>> SearchByUserName(string userName);
+    Task<IEnumerable<UserInfoForSaleCarResponseModel>> SearchByUserName(string phoneNumber);
 }
 
 public class SearchService : ISearchService
@@ -17,9 +17,9 @@ public class SearchService : ISearchService
         _httpClient = httpClient;
     }
 
-    public async Task<IEnumerable<string>> SearchByUserName(string userName)
+    public async Task<IEnumerable<UserInfoForSaleCarResponseModel>> SearchByUserName(string phoneNumber)
     {
-        var userNames = await _httpClient.GetFromJsonAsync<List<string>>($"SearchByUserName?name={userName}");
+        var userNames = await _httpClient.GetFromJsonAsync<List<UserInfoForSaleCarResponseModel>>($"SearchByUserPhoneNumber?phoneNumber={phoneNumber}");
         return userNames!;
     }
 }

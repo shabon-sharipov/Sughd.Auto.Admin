@@ -1,117 +1,141 @@
 ﻿@page "/AddCar"
+@using System.Net
 
-<MudStack Row>
-    <MudCard>
+<MudButton Class="m-4" OnClick="@(() => NavigateToCarsPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small"></MudButton>
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+    <MudCard Class="w-25 mb-4">
         <MudCardContent>
             <MudText Align="Align.Center" Class="mb-n4">Car Registration</MudText>
             <MudForm>
-                <MudTextField @bind-Value="_model.VINCode"
-                              For="@(() => _model.VINCode)"
+                <MudTextField @bind-Value="_car.VINCode"
+                              For="@(() => _car.VINCode)"
                               Immediate="true"
                               Label="VINCode"
-                              Id =""/>
-                <MudTextField @bind-Value="_model.CarNumber"
-                              For="@(() => _model.CarNumber)"
+                              Id=""/>
+                <MudTextField @bind-Value="_car.CarNumber"
+                              For="@(() => _car.CarNumber)"
                               Immediate="true"
                               Label="Номер автомобил"
                               Id=""/>
-                <MudTextField @bind-Value="_model.DateOfPablisher"
-                              For="@(() => _model.DateOfPablisher)"
+                <MudTextField @bind-Value="_car.DateOfPablisher"
+                              For="@(() => _car.DateOfPablisher)"
                               Immediate="true"
                               Label="Год выпуска"
-                              Id =""/>
-                <MudTextField @bind-Value="_model.Price"
-                              For="@(() => _model.Price)"
+                              Id=""/>
+                <MudTextField @bind-Value="_car.Price"
+                              For="@(() => _car.Price)"
                               Immediate="true"
                               Label="Цена"
-                              Id =""/>
-                <MudTextField @bind-Value="_model.EngineCapacity"
-                              For="@(() => _model.EngineCapacity)"
+                              Id=""/>
+                <MudTextField @bind-Value="_car.EngineCapacity"
+                              For="@(() => _car.EngineCapacity)"
                               Immediate="true"
                               Label="Оъем двигателя"
-                              Id =""/>
-                <MudTextField @bind-Value="_model.Mileage"
-                              For="@(() => _model.Mileage)"
+                              Id=""/>
+                <MudTextField @bind-Value="_car.Mileage"
+                              For="@(() => _car.Mileage)"
                               Immediate="true"
                               Label="Пробег"
-                              Id =""/>
-                
-                <MudSwitch @bind-Value="_model.IsActive" Color="Color.Info" T="bool" Label="Active"/>
-                <MudSwitch @bind-Value="_model.IsRastamogeno" Color="Color.Info" T="bool" Label="Растаможен в РТ"/>
+                              Id=""/>
 
-                <MudSelect Label="Тип топлива" @bind-Value="_model.FuelType" Variant="Variant.Outlined" T="string" Id ="">
+                <MudSwitch @bind-Value="_car.IsActive" Color="Color.Info" T="bool" Label="Active"/>
+                <MudSwitch @bind-Value="_car.IsRastamogeno" Color="Color.Info" T="bool" Label="Растаможен в РТ"/>
+
+                <MudSelect Label="Тип топлива" @bind-Value="_car.FuelType" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
                     @foreach (var fuelType in _fuelTypes)
                     {
                         <MudSelectItem Value="@fuelType">@fuelType</MudSelectItem>
                     }
                 </MudSelect>
-                
-                <MudSelect Label="Коробка Передача" @bind-Value="_model.Transmission" Variant="Variant.Outlined" T="string" Id ="">
+
+                <MudSelect Label="Коробка Передача" @bind-Value="_car.Transmission" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
                     @foreach (var transmission in _transmissions)
                     {
                         <MudSelectItem Value="@transmission">@transmission</MudSelectItem>
                     }
                 </MudSelect>
-                
-                <MudSelect Label="Кузов" @bind-Value="_model.CarBody" Variant="Variant.Outlined"  T="string" Id ="">
+
+                <MudSelect Label="Кузов" @bind-Value="_car.CarBody" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
                     @foreach (var carBody in _carBodies)
                     {
                         <MudSelectItem Value="@carBody">@carBody</MudSelectItem>
                     }
                 </MudSelect>
 
-                <MudSelect Label="Mark" @bind-Value="_model.MarkaId" Variant="Variant.Outlined" T="long" Id =""  
-                           onchange="@(GetModelByMarkaId(_model.MarkaId))">
+                <MudSelect Label="Mark" @bind-Value="_car.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
+                           onchange="@(GetModelByMarkaId(_car.MarkaId))">
                     @foreach (var markaResponsModel in _carMarkaResponsModels)
                     {
                         <MudSelectItem Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
                     }
                 </MudSelect>
 
-                <MudSelect Label="Модел" @bind-Value="_model.ModelId" Variant="Variant.Outlined" T="long" Id="">
+                <MudSelect Label="Модел" @bind-Value="_car.ModelId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
                     @foreach (var modelResponseModel in _carModelResponseModels)
                     {
                         <MudSelectItem Value="@modelResponseModel.Id">@modelResponseModel.Name</MudSelectItem>
                     }
                 </MudSelect>
-                
-                <MudAutocomplete T="string" Label="User" @bind-Value="userName" SearchFunc="@SearchUser"/>
-                @foreach (var image in Images)
+
+                <MudAutocomplete T="string" Label="User phone number" @bind-Value="_phoneNumber" SearchFunc="@SearchUser"/>
+
+                @* _images  *@
+                @if (_filesForShowToUser != null)
                 {
-                    <MudImage Src="@image" Width="350" Height="200" Alt="Mony the dog" Elevation="25" Class="rounded-lg"/>
+                    <MudText Typo="@Typo.h6">@_filesForShowToUser.Count() File@(_filesForShowToUser.Count() == 1 ? "" : "s"):</MudText>
+                    <MudList>
+                        @foreach (var file in _filesForShowToUser)
+                        {
+                            <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
+                                @file.Name <code>@file.Size bytes</code>
+                            </MudListItem>
+                        }
+                    </MudList>
                 }
-                
-                <MudTextField @bind-Value="_model.UserId"
-                              For="@(() => _model.UserId)"
-                              Immediate="true"
-                              Label="UserID"
-                              Id =""/>
-                <InputFile multiple OnChange="@GetImage"></InputFile>
+                <MudFileUpload T="IBrowserFile" OnFilesChanged="UploadImage">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="@context.Id">
+                            Upload Image
+                        </MudButton>
+                        <MudButton OnClick ="DeleteImage" 
+                                   Variant="Variant.Filled"
+                                   Color ="Color.Primary"
+                                   StartIcon ="@Icons.Material.Filled.Clear">
+                            Clear Images
+                        </MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+                @* _images  *@
             </MudForm>
             <MudCardActions>
                 <MudButton
                     Variant="Variant.Filled"
-                    Color="Color.Primary"
-                    Class="ml-auto"
+                    StartIcon="@Icons.Material.Filled.Save"
+                    Color="Color.Info"
+                    Size="Size.Medium"
                     OnClick="@(async () => await SaveCar())">
-                    Order
+                    Save
                 </MudButton>
             </MudCardActions>
         </MudCardContent>
     </MudCard>
 </MudStack>
+
 @code{
-    private CarRequestModel _model = new();
+    private CarRequestModel _car = new();
     private List<string> _carBodies = new();
     private List<string> _fuelTypes = new();
     private List<string> _transmissions = new();
     private List<CarMarkaResponsModel> _carMarkaResponsModels = new();
     private List<CarModelResponseModel> _carModelResponseModels = new();
-    private List<string> Images = new();
-    private string userName;
-    private bool resetValueOnEmptyText;
-    private bool coerceText;
-    private bool coerceValue;
+    private List<UserInfoForSaleCarResponseModel> _userInfoForSaleCarResponseModels = new();
+    readonly IList<IBrowserFile> _filesForShowToUser = new List<IBrowserFile>();
+    private readonly List<string> _images = new();
+    private string _phoneNumber;
     
     protected override async Task OnInitializedAsync()
     {
@@ -121,32 +145,27 @@
 
     private async Task SaveCar()
     {
-        _model.Images = Images;
-        await _carService.Post(_model);
+        _car.UserId = _userInfoForSaleCarResponseModels.FirstOrDefault(u => u.PhoneNumber == _phoneNumber)!.Id;
+        _car.Images = _images;
+        var result = await _carService.Post(_car);
+        if (result == HttpStatusCode.OK)
+        {
+            Navigation.NavigateTo(PageBlazor.CARS);
+        }
     }
 
     private async Task GetCarDetails()
     {
-        var carGetCarDetails = await _carDetailsService.GetCarDetails();
-
-        _carBodies = (carGetCarDetails.TryGetValue("CarBody", out var detail)
-            ? JsonConvert.DeserializeObject<List<string>>(detail.ToString()!)
-            : null)!;
-
-        _fuelTypes = (carGetCarDetails.TryGetValue("FuelType", out var fuelType)
-            ? JsonConvert.DeserializeObject<List<string>>(fuelType.ToString()!)
-            : null)!;
-
-        _transmissions = (carGetCarDetails.TryGetValue("Transmission", out var transmission)
-            ? JsonConvert.DeserializeObject<List<string>>(transmission.ToString()!)
-            : null)!;
+        _carBodies = await _carDetailsService.CarBady();
+        _fuelTypes = await _carDetailsService.FuelType();
+        _transmissions = await _carDetailsService.Transmission();
     }
 
     private async Task GetCarMarka()
     {
         _carMarkaResponsModels = await _carDetailsService.GetCarMarka();
     }
-    
+
     private async Task GetModelByMarkaId(long markaId)
     {
         if (markaId != 0)
@@ -155,26 +174,40 @@
         }
     }
 
-    private async Task<IEnumerable<string>> SearchUser(string name)
+    private async Task<IEnumerable<string>> SearchUser(string phoneNumber)
     {
-        if (string.IsNullOrEmpty(name))
+        if (string.IsNullOrEmpty(phoneNumber))
         {
             return new List<string>();
         }
 
-        return await _searchService.SearchByUserName(name);
+        var userInfoForSaleCarResponseModels = await _searchService.SearchByUserName(phoneNumber);
+        _userInfoForSaleCarResponseModels = userInfoForSaleCarResponseModels.ToList();
+        return userInfoForSaleCarResponseModels.Select(s => s.PhoneNumber);
     }
 
-    private async Task GetImage(InputFileChangeEventArgs fileChangeEventArgs)
+    private async Task UploadImage(InputFileChangeEventArgs fileChangeEventArgs)
     {
         var maxAllowedSize = 2 * 1024 * 1024;
-        
+
         foreach (var file in fileChangeEventArgs.GetMultipleFiles())
         {
             using var strem = file.OpenReadStream(maxAllowedSize);
             using var ms = new MemoryStream();
             await strem.CopyToAsync(ms);
-            Images.Add($"data:{file.ContentType}; base64, {Convert.ToBase64String(ms.ToArray())}");
+            _images.Add($"data:{file.ContentType}; base64, {Convert.ToBase64String(ms.ToArray())}");
+            _filesForShowToUser.Add(fileChangeEventArgs.File);
         }
+    }
+
+    private void DeleteImage()
+    {
+        _filesForShowToUser.Clear();
+        _images.Clear();
+    }
+
+    private void NavigateToCarsPage()
+    {
+        Navigation.NavigateTo(PageBlazor.CARS);
     }
 }

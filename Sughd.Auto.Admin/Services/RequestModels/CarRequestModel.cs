@@ -26,7 +26,7 @@ public class CarRequestModel
 
     public string CarBody { get; set; } = string.Empty;
 
-    public int UserId { get; set; }
+    public long UserId { get; set; }
     
     public long MarkaId { get; set; }
 

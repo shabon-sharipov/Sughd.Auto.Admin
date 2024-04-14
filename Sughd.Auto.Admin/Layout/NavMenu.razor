@@ -14,7 +14,9 @@
                     Match="NavLinkMatch.All">
             Counter
         </MudNavLink>
-        <MudNavGroup Title="Registration cars" Expanded="false">
+        <MudNavGroup Title="Registration cars"
+                     Icon="@Icons.Material.Filled.DirectionsCarFilled"
+                     Expanded="false">
             <MudNavLink Href="/Cars">Cars</MudNavLink>
             <MudNavLink Href="/Marka">Marka</MudNavLink>
             <MudNavLink Href="/Model">Model</MudNavLink>
@@ -52,6 +54,7 @@
         </MudNavLink>
     </MudStack>
 </MudNavMenu>
+
 @code {
     private bool collapseNavMenu = true;
 
@@ -61,5 +64,4 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
-
 }
