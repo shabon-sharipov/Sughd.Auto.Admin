@@ -1,0 +1,111 @@
+﻿@page "/Marka"
+<MudTable Items="@_markas" Hover="true"
+          Class="m-4"
+          ReadOnly="@ronly"
+          SortLabel="Sort By"
+          Loading="@_loading"
+          Filter="new Func<CarMarkaResponsModel, bool>(SearchByName)"
+          CanCancelEdit="@canCancelEdit"
+          @bind-SelectedItem="selectedMark"
+          CommitEditTooltip="Commit Edit"
+          RowEditPreview="BackupItem"
+          RowEditCancel="ResetItemToOriginalValues"
+          RowEditCommit="ItemHasBeenCommitted">
+    
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Car Marka</MudText>
+        <MudSpacer/>
+        <MudTextField @bind-Value="searchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudButton OnClick="@(() => NavigateToAddMarkaPage())" Class="m-4" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small">Add new marka</MudButton>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarMarkaResponsModel, object>(x => x.Id)">Id</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarMarkaResponsModel, object>(x => x.Name)">Name</MudTableSortLabel>
+        </MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="CarNumber">@context.Name</MudTd>
+    </RowTemplate>
+
+    <RowEditingTemplate>
+        <MudTd DataLabel="VINCode">
+            <MudTextField @bind-Value="@context.Id"/>
+        </MudTd>
+        <MudTd DataLabel="DateOfPablisher">
+            <MudTextField @bind-Value="@context.Name"/>
+        </MudTd>
+    </RowEditingTemplate>
+
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }"/>
+    </PagerContent>
+
+</MudTable>
+<MudCard>
+    <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
+</MudCard>
+@code {
+    private bool enabled = true;
+    private string searchTerm = "";
+    private bool ronly = true;
+    private bool _loading = true;
+    private bool canCancelEdit = true;
+    private CarMarkaResponsModel selectedMark = null;
+    private CarMarkaResponsModel marksBeforeEdit = null;
+    private List<CarMarkaResponsModel> _markas = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _markas = await _carDetailsService.GetCarMarka();
+        _loading = false;
+    }
+
+    private bool SearchByName(CarMarkaResponsModel markaResponsModel)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return true;
+
+        if (markaResponsModel.Name.Contains(searchTerm))
+            return true;
+        return false;
+    }
+
+    private void NavigateToAddMarkaPage()
+    {
+        Navigation.NavigateTo(PageBlazor.ADD_Marka);
+    }
+   
+    #region Edit Table
+
+    private void BackupItem(object element)
+    {
+        marksBeforeEdit = new CarMarkaResponsModel()
+        {
+            Name = ((CarMarkaResponsModel)element).Name,
+        };
+    }
+
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((CarMarkaResponsModel)element).Name = marksBeforeEdit.Name;
+    }
+
+    private void ItemHasBeenCommitted(object element)
+    {
+        var carMarkaResponsModel = (CarMarkaResponsModel)element;
+        var carMarkaRequest = new CarMarkaRequest
+        {
+            Name = carMarkaResponsModel.Name
+        };
+
+        _carDetailsService.UpdateCarMarka(carMarkaResponsModel.Id, carMarkaRequest);
+    }
+    
+    #endregion
+}

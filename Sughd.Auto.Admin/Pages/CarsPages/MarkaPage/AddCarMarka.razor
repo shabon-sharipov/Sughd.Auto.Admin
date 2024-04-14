@@ -1,0 +1,65 @@
+﻿@page "/AddMarka"
+@using System.Net
+
+<MudButton Class="m-4" OnClick="@(() => NavigateToMarkaPage())" 
+           Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small"></MudButton>
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+    <MudCard Class="w-25 mb-4">
+        <MudCardContent>
+            <MudText Align="Align.Center" Class="mb-n4">Marka Registration</MudText>
+            <MudForm>
+                <MudTextField @bind-Value="_marka.Name"
+                              For="@(() => _marka.Name)"
+                              Immediate="true"
+                              Label="Marka"
+                              Id=""/>
+            </MudForm>
+            <MudCardActions>
+                <MudButton
+                    Variant="Variant.Filled"
+                    StartIcon="@Icons.Material.Filled.Save"
+                    Color="Color.Info"
+                    Size="Size.Medium"
+                    OnClick="@(async () => await SaveMarka())">
+                    Save
+                </MudButton>
+            </MudCardActions>
+        </MudCardContent>
+    </MudCard>
+</MudStack>
+
+@code{
+    private CarMarkaRequest _marka = new();
+    private List<CarMarkaResponsModel> _markaResponsModels = new();
+    private string _phoneNumber;
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    private async Task SaveMarka()
+    {
+        var result = await _carDetailsService.AddCarMarka(_marka);
+        if (result == HttpStatusCode.OK)
+        {
+            Navigation.NavigateTo(PageBlazor.MARKA);
+        }
+    }
+
+    // private async Task<IEnumerable<string>> SearchMarka(string markaName)
+    // {
+    //     if (string.IsNullOrEmpty(markaName))
+    //     {
+    //         return new List<string>();
+    //     }
+    //
+    //     var markaResponsModels = await _searchService.SearchByMarkaName(markaName);
+    //     _markaResponsModels = markaResponsModels.ToList();
+    //     return markaResponsModels.Select(s => s.Name);
+    // }
+    
+    private void NavigateToMarkaPage()
+    {
+        Navigation.NavigateTo(PageBlazor.MARKA);
+    }
+}

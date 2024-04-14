@@ -77,7 +77,9 @@
                     }
                 </MudSelect>
 
-                <MudAutocomplete T="string" Label="User phone number" @bind-Value="_phoneNumber" SearchFunc="@SearchUser"/>
+                <MudAutocomplete T="string" Label="User phone number" @bind-Value="_phoneNumber" SearchFunc="@SearchUser"  Required="true"
+                                 HelperText="This field is required"
+                                 HelperTextStyle="color: red;"/>
 
                 @* _images  *@
                 @if (_filesForShowToUser != null)

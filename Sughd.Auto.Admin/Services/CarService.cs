@@ -26,7 +26,6 @@ public class CarService : ICarService
 
     public async Task<HttpStatusCode> Post(CarRequestModel carRequestModel)
     { 
-        Console.WriteLine(JsonConvert.SerializeObject(carRequestModel));
         var responseMessage =  await _httpClient.PostAsJsonAsync("Car", carRequestModel);
         return responseMessage.StatusCode;
     }
