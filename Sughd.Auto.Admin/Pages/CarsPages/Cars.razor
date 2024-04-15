@@ -53,9 +53,6 @@
             <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.IsActive)">IsActive</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Images)">Images</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
             <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.FuelType)">FuelType</MudTableSortLabel>
         </MudTh>
         <MudTh>
@@ -70,6 +67,9 @@
         <MudTh>
             <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Color)">Color</MudTableSortLabel>
         </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Images)">Images</MudTableSortLabel>
+        </MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Id">@context.Id</MudTd>
@@ -83,20 +83,20 @@
         <MudTd DataLabel="Mileage">@context.Mileage</MudTd>
         <MudTd DataLabel="IsRastamogeno">@context.IsRastamogeno</MudTd>
         <MudTd DataLabel="IsActive">@context.IsActive</MudTd>
-        <MudTd DataLabel="Images">
-            <MudButton OnClick="@(() => OpenDialog(context.Images))" Variant="Variant.Filled" Color="Color.Primary">
-                Images
-            </MudButton>
-        </MudTd>
         <MudTd DataLabel="FuelType">@context.FuelType</MudTd>
         <MudTd DataLabel="Transmission">@context.Transmission</MudTd>
         <MudTd DataLabel="CarBody">@context.CarBody</MudTd>
         <MudTd DataLabel="UserName">@context.UserName</MudTd>
         <MudTd DataLabel="Color">@context.Color</MudTd>
+        <MudTd DataLabel="Images">
+            <MudButton OnClick="@(() => OpenDialog(context.Images))" Variant="Variant.Filled" Color="Color.Primary">
+                Images
+            </MudButton>
+        </MudTd>
     </RowTemplate>
     <RowEditingTemplate>
         <MudTd DataLabel="Id">
-            <MudTextField @bind-Value="@context.Id" Required />
+            <MudTextFiel/>
         </MudTd>
         <MudTd DataLabel="CarNumber">
             <MudTextField @bind-Value="@context.CarNumber"/>
@@ -141,14 +141,6 @@
         <MudTd DataLabel="IsActive">
             <MudSwitch @bind-Value="@context.IsActive" Color="Color.Info" T="bool"/>
         </MudTd>
-        <MudTd DataLabel="Images">
-            <MudSelect @bind-Value="@context.Transmission" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                @foreach (var image in context.Images)
-                {
-                    <MudSelectItem size="@Size.Medium" Value="@image">@image</MudSelectItem>
-                }
-            </MudSelect>
-        </MudTd>
         <MudTd DataLabel="FuelType">
             <MudSelect @bind-Value="@context.FuelType" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
                 @foreach (var fuelType in _fuelTypes)
@@ -179,18 +171,22 @@
         <MudTd DataLabel="Color">
             <MudTextField @bind-Value="@context.Color"/>
         </MudTd>
+        <MudTd DataLabel="Images">
+            <MudTextFiel/>
+        </MudTd>
     </RowEditingTemplate>
     <PagerContent>
-        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
+        <MudTablePager PageSizeOptions="new int[] { 5, 10, 25, 50, 100 }" />
     </PagerContent>
 </MudTable>
-<MudCard>
+<MudCard Class="m-4">
     <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
 </MudCard>
 @code {
     private bool enabled = true;
     private string searchTerm = "";
     private bool ronly = true;
+    private bool showIsActiveCar = true;
     private bool _loading = true;
     private bool canCancelEdit = true;
     private List<string> _carBodies = new();
@@ -230,19 +226,16 @@
 
     private async Task GetCarDetails()
     {
-        _carBodies = await _carDetailsService.CarBady();
-
         _fuelTypes = await _carDetailsService.FuelType();
-
         _transmissions = await _carDetailsService.Transmission();
+        _carBodies = await _carDetailsService.CarBady();
     }
 
     private void NavigateToAddCarPage()
     {
         Navigation.NavigateTo(PageBlazor.ADD_CAR);
     }
-    private string imageClass = "rounded-lg ma-4";
-
+ 
     #region Shoe image in ShowImageDialog
 
     private void OpenDialog(List<string> images)

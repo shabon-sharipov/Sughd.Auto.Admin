@@ -11,8 +11,10 @@ public interface ICarDetailsService
     Task<List<CarMarkaResponsModel>> GetCarMarka();
     Task UpdateCarMarka(long markaId, CarMarkaRequest carMarkaRequest);
     Task<HttpStatusCode> AddCarMarka(CarMarkaRequest carMarkaRequest);
-    Task<List<CarModelResponseModel>> GetCarModel();
     Task<List<CarModelResponseModel>> GetCarModelByMarkaId(long markaId);
+    Task<List<CarModelResponseModel>> GetCarModel();
+    Task<HttpStatusCode> AddCarModel(CarModelRequest carModelRequest);
+    Task UpdateCarModel(long modelId, CarModelRequest carModelRequest);
     Task<List<string>> FuelType();
     Task<List<string>> CarBady();
     Task<List<string>> Transmission();
@@ -55,12 +57,27 @@ public class CarDetailsService : ICarDetailsService
 
     #endregion
 
+    #region Models
+
     public async Task<List<CarModelResponseModel>> GetCarModel()
     {
         var carMarka =
             await _httpClient.GetFromJsonAsync<List<CarModelResponseModel>>("Model/GetAll?offSet=0&pageSize=100");
         return carMarka;
     }
+
+    public async Task<HttpStatusCode> AddCarModel(CarModelRequest carModelRequest)
+    {
+        var responseMessage =  await _httpClient.PostAsJsonAsync("Marka", carModelRequest);
+        return responseMessage.StatusCode;
+    }
+
+    public async Task UpdateCarModel(long modelId, CarModelRequest carModelRequest)
+    {
+        await _httpClient.PutAsJsonAsync($"Model?id={modelId}", carModelRequest);
+    }
+
+    #endregion
     
 
     #region Get CarBady, FuelType and Transmission

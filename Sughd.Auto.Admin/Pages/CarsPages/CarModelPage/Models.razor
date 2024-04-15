@@ -1,0 +1,135 @@
+﻿@page "/Model"
+
+<MudTable Items="@_models" Hover="true"
+          Class="m-4"
+          ReadOnly="@ronly"
+          SortLabel="Sort By"
+          Loading="@_loading"
+          Filter="new Func<CarModelResponseModel, bool>(SearchByName)"
+          CanCancelEdit="@canCancelEdit"
+          @bind-SelectedItem="_selectedModel"
+          CommitEditTooltip="Commit Edit"
+          RowEditPreview="BackupItem"
+          RowEditCancel="ResetItemToOriginalValues"
+          RowEditCommit="ItemHasBeenCommitted">
+    
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Car Model</MudText>
+        <MudSpacer/>
+        <MudTextField @bind-Value="searchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudButton OnClick="@(() => NavigateToAddModelPage())" Class="m-4" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small">Add new model</MudButton>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarModelResponseModel, object>(x => x.Id)">Id</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarModelResponseModel, object>(x => x.Name)">Модел</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<CarModelResponseModel, object>(x => x.MarkaName)">Марка</MudTableSortLabel>
+        </MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="CarNumber">@context.Name</MudTd>
+        <MudTd DataLabel="CarNumber">@context.MarkaName</MudTd>
+    </RowTemplate>
+
+    <RowEditingTemplate>
+        <MudTd DataLabel="Id">
+           <MudTextFiel/>
+        </MudTd>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="@context.Name"/>
+        </MudTd>
+        <MudTd DataLabel="MarkaName">
+            <MudSelect @bind-Value="@context.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
+                @foreach (var markaResponsModel in _carMarkaResponsModels)
+                {
+                    <MudSelectItem size="@Size.Small" Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudTd>
+    </RowEditingTemplate>
+
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }"/>
+    </PagerContent>
+
+</MudTable>
+<MudCard Class="m-4">
+    <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
+</MudCard>
+@code {
+    private bool enabled = true;
+    private string searchTerm = "";
+    private bool ronly = true;
+    private bool _loading = true;
+    private bool canCancelEdit = true;
+    private CarModelResponseModel _selectedModel = null;
+    private List<CarMarkaResponsModel> _carMarkaResponsModels = new();
+    private CarModelResponseModel _modelsBeforeEdit = null;
+    private List<CarModelResponseModel> _models = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _models = await _carDetailsService.GetCarModel();
+        await GetCarMarka();
+        _loading = false;
+    }
+
+    private bool SearchByName(CarModelResponseModel carModelResponseModel)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return true;
+
+        if (carModelResponseModel.Name.Contains(searchTerm))
+            return true;
+        return false;
+    }
+
+    private void NavigateToAddModelPage()
+    {
+        Navigation.NavigateTo(PageBlazor.ADD_MODEL);
+    }
+   
+    #region Edit Table
+
+    private void BackupItem(object element)
+    {
+        _modelsBeforeEdit = new CarModelResponseModel()
+        {
+            Name = ((CarModelResponseModel)element).Name,
+            MarkaName = ((CarModelResponseModel)element).MarkaName
+        };
+    }
+
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((CarModelResponseModel)element).Name = _modelsBeforeEdit.Name;
+        ((CarModelResponseModel)element).MarkaName = _modelsBeforeEdit.MarkaName;
+    }
+    
+    private async Task GetCarMarka()
+    {
+        _carMarkaResponsModels = await _carDetailsService.GetCarMarka();
+    }
+
+    private void ItemHasBeenCommitted(object element)
+    {
+        var carModelResponseModel = (CarModelResponseModel)element;
+        
+        var carModelRequest = new CarModelRequest
+        {
+            Name = carModelResponseModel.Name,
+            MarkaId = carModelResponseModel.MarkaId
+        };
+        Console.WriteLine(JsonConvert.SerializeObject(element));
+        _carDetailsService.UpdateCarModel(carModelResponseModel.Id, carModelRequest);
+    }
+    
+    #endregion
+}

@@ -1,4 +1,5 @@
-﻿@page "/AddMarka"
+﻿@page "/AddModel"
+
 @using System.Net
 
 <MudButton Class="m-4" OnClick="@(() => NavigateToMarkaPage())" 
@@ -8,11 +9,17 @@
         <MudCardContent>
             <MudText Align="Align.Center" Class="mb-n4">Marka Registration</MudText>
             <MudForm>
-                <MudTextField @bind-Value="_marka.Name"
-                              For="@(() => _marka.Name)"
+                <MudTextField @bind-Value="_model.Name"
+                              For="@(() => _model.Name)"
                               Immediate="true"
                               Label="Marka"
                               Id=""/>
+                <MudSelect Label="Mark" @bind-Value="_model.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
+                    @foreach (var markaResponsModel in _carMarkaResponsModels)
+                    {
+                        <MudSelectItem Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
+                    }
+                </MudSelect>
             </MudForm>
             <MudCardActions>
                 <MudButton
@@ -29,23 +36,29 @@
 </MudStack>
 
 @code{
-    private CarMarkaRequest _marka = new();
-    private List<CarMarkaResponsModel> _markaResponsModels = new();
+    private CarModelRequest _model = new();
+    private List<CarMarkaResponsModel> _carMarkaResponsModels = new();
     private string _phoneNumber;
 
     protected override async Task OnInitializedAsync()
     {
+        await GetCarMarka();
     }
 
     private async Task SaveMarka()
     {
-        var result = await _carDetailsService.AddCarMarka(_marka);
+        var result = await _carDetailsService.AddCarModel(_model);
         if (result == HttpStatusCode.OK)
         {
             Navigation.NavigateTo(PageBlazor.MARKA);
         }
     }
     
+    private async Task GetCarMarka()
+    {
+        _carMarkaResponsModels = await _carDetailsService.GetCarMarka();
+    }
+
     private void NavigateToMarkaPage()
     {
         Navigation.NavigateTo(PageBlazor.MARKA);

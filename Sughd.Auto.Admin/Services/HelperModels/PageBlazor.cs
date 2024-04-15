@@ -6,4 +6,6 @@ public static class PageBlazor
     public const string ADD_CAR = "/AddCar";
     public const string ADD_Marka = "/AddMarka";
     public const string MARKA = "/Marka";
+    public const string ADD_MODEL = "/AddModel";
+    public const string MODEL = "/Model";
 }
