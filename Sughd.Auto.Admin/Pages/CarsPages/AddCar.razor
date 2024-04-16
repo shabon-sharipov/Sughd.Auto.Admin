@@ -1,17 +1,11 @@
 ﻿@page "/AddCar"
-@using System.Net
 
 <MudButton Class="m-4" OnClick="@(() => NavigateToCarsPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small"></MudButton>
 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
     <MudCard Class="w-25 mb-4">
         <MudCardContent>
             <MudText Align="Align.Center" Class="mb-n4">Car Registration</MudText>
-            <MudForm>
-                <MudTextField @bind-Value="_car.VINCode"
-                              For="@(() => _car.VINCode)"
-                              Immediate="true"
-                              Label="VINCode"
-                              Id=""/>
+            <MudForm @ref="@form">
                 <MudTextField @bind-Value="_car.CarNumber"
                               For="@(() => _car.CarNumber)"
                               Immediate="true"
@@ -55,10 +49,17 @@
                     }
                 </MudSelect>
 
-                <MudSelect Label="Кузов" @bind-Value="_car.CarBody" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
+                <MudSelect Label="Кузов" @bind-Value="_car.Color" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
                     @foreach (var carBody in _carBodies)
                     {
                         <MudSelectItem Value="@carBody">@carBody</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect Label="Цвет" @bind-Value="_car.CarBody" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
+                    @foreach (var color in _colors)
+                    {
+                        <MudSelectItem Value="@color">@color</MudSelectItem>
                     }
                 </MudSelect>
 
@@ -77,9 +78,7 @@
                     }
                 </MudSelect>
 
-                <MudAutocomplete T="string" Label="User phone number" @bind-Value="_phoneNumber" SearchFunc="@SearchUser"  Required="true"
-                                 HelperText="This field is required"
-                                 HelperTextStyle="color: red;"/>
+                <MudAutocomplete T="string" Label="User phone number" @bind-Value="_phoneNumber" SearchFunc="@SearchUser" Required="true"/>
 
                 @* _images  *@
                 @if (_filesForShowToUser != null)
@@ -103,10 +102,10 @@
                                    for="@context.Id">
                             Upload Image
                         </MudButton>
-                        <MudButton OnClick ="DeleteImage" 
+                        <MudButton OnClick="DeleteImage"
                                    Variant="Variant.Filled"
-                                   Color ="Color.Primary"
-                                   StartIcon ="@Icons.Material.Filled.Clear">
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.Clear">
                             Clear Images
                         </MudButton>
                     </ButtonTemplate>
@@ -128,17 +127,22 @@
 </MudStack>
 
 @code{
+
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Please provide phone number")]
+    public string _phoneNumber;
+
     private CarRequestModel _car = new();
+    MudForm form;
     private List<string> _carBodies = new();
     private List<string> _fuelTypes = new();
     private List<string> _transmissions = new();
+    private List<string> _colors = new();
     private List<CarMarkaResponsModel> _carMarkaResponsModels = new();
     private List<CarModelResponseModel> _carModelResponseModels = new();
     private List<UserInfoForSaleCarResponseModel> _userInfoForSaleCarResponseModels = new();
     readonly IList<IBrowserFile> _filesForShowToUser = new List<IBrowserFile>();
     private readonly List<string> _images = new();
-    private string _phoneNumber;
-    
+
     protected override async Task OnInitializedAsync()
     {
         await GetCarDetails();
@@ -147,20 +151,25 @@
 
     private async Task SaveCar()
     {
-        _car.UserId = _userInfoForSaleCarResponseModels.FirstOrDefault(u => u.PhoneNumber == _phoneNumber)!.Id;
-        _car.Images = _images;
-        var result = await _carService.Post(_car);
-        if (result == HttpStatusCode.OK)
+        await form.Validate();
+        if (form.IsValid)
         {
-            Navigation.NavigateTo(PageBlazor.CARS);
+            _car.UserId = _userInfoForSaleCarResponseModels.FirstOrDefault(u => u.PhoneNumber == _phoneNumber)!.Id;
+            _car.Images = _images;
+            var result = await _carService.Post(_car);
+            if (result == HttpStatusCode.OK)
+            {
+                Navigation.NavigateTo(PageBlazor.CARS);
+            }
         }
     }
 
     private async Task GetCarDetails()
     {
-        _carBodies = await _carDetailsService.CarBady();
-        _fuelTypes = await _carDetailsService.FuelType();
-        _transmissions = await _carDetailsService.Transmission();
+        _fuelTypes = CarDetailsHelper.FuelType();
+        _transmissions = CarDetailsHelper.Transmission();
+        _carBodies = CarDetailsHelper.CarBody();
+        _colors = CarDetailsHelper.Color();
     }
 
     private async Task GetCarMarka()
@@ -212,4 +221,5 @@
     {
         Navigation.NavigateTo(PageBlazor.CARS);
     }
+
 }

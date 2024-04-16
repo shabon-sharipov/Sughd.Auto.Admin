@@ -8,7 +8,7 @@
     <MudCard Class="w-25 mb-4">
         <MudCardContent>
             <MudText Align="Align.Center" Class="mb-n4">Marka Registration</MudText>
-            <MudForm>
+            <MudForm @ref="form">
                 <MudTextField @bind-Value="_model.Name"
                               For="@(() => _model.Name)"
                               Immediate="true"
@@ -36,9 +36,9 @@
 </MudStack>
 
 @code{
+    MudForm form;
     private CarModelRequest _model = new();
     private List<CarMarkaResponsModel> _carMarkaResponsModels = new();
-    private string _phoneNumber;
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,10 +47,15 @@
 
     private async Task SaveMarka()
     {
-        var result = await _carDetailsService.AddCarModel(_model);
-        if (result == HttpStatusCode.OK)
+        await form.Validate();
+
+        if (form.IsValid)
         {
-            Navigation.NavigateTo(PageBlazor.MARKA);
+            var result = await _carDetailsService.AddCarModel(_model);
+            if (result == HttpStatusCode.OK)
+            {
+                Navigation.NavigateTo(PageBlazor.MARKA);
+            }
         }
     }
     

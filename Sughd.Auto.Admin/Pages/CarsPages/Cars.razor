@@ -166,10 +166,15 @@
             </MudSelect>
         </MudTd>
         <MudTd DataLabel="UserName">
-            <MudTextField @bind-Value="@context.UserName"/>
+            <MudTextFiel/>
         </MudTd>
         <MudTd DataLabel="Color">
-            <MudTextField @bind-Value="@context.Color"/>
+            <MudSelect @bind-Value="@context.Color" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
+                @foreach (var color in _colors)
+                {
+                    <MudSelectItem size="@Size.Medium" Value="@color">@color</MudSelectItem>
+                }
+            </MudSelect>
         </MudTd>
         <MudTd DataLabel="Images">
             <MudTextFiel/>
@@ -192,6 +197,7 @@
     private List<string> _carBodies = new();
     private List<string> _fuelTypes = new();
     private List<string> _transmissions = new();
+    private List<string> _colors = new();
     private CarResponseModels selectedCar = null;
     private CarResponseModels carBeforeEdit = null;
     private List<CarResponseModels> ? _cars = new();
@@ -226,9 +232,10 @@
 
     private async Task GetCarDetails()
     {
-        _fuelTypes = await _carDetailsService.FuelType();
-        _transmissions = await _carDetailsService.Transmission();
-        _carBodies = await _carDetailsService.CarBady();
+        _fuelTypes = CarDetailsHelper.FuelType();
+        _transmissions = CarDetailsHelper.Transmission();
+        _carBodies = CarDetailsHelper.CarBody();
+        _colors = CarDetailsHelper.Color();
     }
 
     private void NavigateToAddCarPage()
