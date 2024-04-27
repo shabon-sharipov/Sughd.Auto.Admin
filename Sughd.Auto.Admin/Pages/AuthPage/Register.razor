@@ -1,0 +1,111 @@
+﻿@page "/register"
+@using System.Text.RegularExpressions
+@using Sughd.Auto.Admin.AuthService.RequestModel
+
+<MudContainer Class="mt-15">
+    <MudGrid Justify="Justify.Center" AlignItems="AlignItems.Center">
+        <MudItem xs="12" sm="7">
+            <MudPaper Class="pa-4">
+                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField T="string"
+                                  Label="Username"
+                                  Required="true"
+                                  @bind-Value="_registerRequestModel.UserName"
+                                  For="@(() => _registerRequestModel.UserName)"
+                                  RequiredError="User name is required!"/>
+                    <MudTextField T="string"
+                                  Label="Email"
+                                  @bind-Value="_registerRequestModel.Email"
+                                  For="@(() => _registerRequestModel.Email)"
+                                  Required="true"
+                                  RequiredError="Email is required!"
+                                  Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+                    <MudTextField T="string"
+                                  Label="PhoneNumber"
+                                  Required="true"
+                                  @bind-Value="_registerRequestModel.PhoneNumber"
+                                  For="@(() => _registerRequestModel.PhoneNumber)"
+                                  RequiredError="PhoneNumber name is required!"/>
+                    <MudTextField T="string"
+                                  Label="Password"
+                                  @bind-Value="_registerRequestModel.Password"
+                                  For="@(() => _registerRequestModel.Password)"
+                                  HelperText="Choose a strong password"
+                                  @ref="pwField1"
+                                  InputType="InputType.Password"
+                                  Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))"
+                                  Required="true"
+                                  RequiredError="Password is required!"/>
+                    <MudTextField T="string"
+                                  @bind-Value="_registerRequestModel.Password"
+                                  For="@(() => _registerRequestModel.Password)"
+                                  Label="Password" HelperText="Repeat the password"
+                                  InputType="InputType.Password"
+                                  Validation="@(new Func<string, string>(PasswordMatch))"/>
+
+                    <div class="d-flex align-center justify-space-between">
+
+                    </div>
+                </MudForm>
+            </MudPaper>
+            <MudPaper Class="pa-4 mt-4">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Class="ml-auto"
+                           OnClick="async () => await SaveCar()">
+                    Register
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           DisableElevation="true"
+                           OnClick="@(() => form.ResetAsync())">
+                    Reset
+                </MudButton>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    bool success;
+    string[] errors = { };
+    MudTextField<string> pwField1;
+    MudForm form;
+    UserRegisterRequestModel _registerRequestModel = new();
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Password is required!";
+            yield break;
+        }
+
+        if (pw.Length < 8)
+            yield return "Password must be at least of length 8";
+        if (!Regex.IsMatch(pw, @"[A-Z]"))
+            yield return "Password must contain at least one capital letter";
+        if (!Regex.IsMatch(pw, @"[a-z]"))
+            yield return "Password must contain at least one lowercase letter";
+        if (!Regex.IsMatch(pw, @"[0-9]"))
+            yield return "Password must contain at least one digit";
+    }
+
+    private string PasswordMatch(string arg)
+    {
+        if (pwField1.Value != arg)
+            return "Passwords don't match";
+        return null;
+    }
+
+    private async Task SaveCar()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            await _authService.Register(_registerRequestModel);
+            await form.ResetAsync();
+        }
+    }
+
+}

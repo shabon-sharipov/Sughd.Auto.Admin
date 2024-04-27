@@ -65,7 +65,7 @@ public class CarDetailsService : ICarDetailsService
 
     public async Task<HttpStatusCode> AddCarModel(CarModelRequest carModelRequest)
     {
-        var responseMessage =  await _httpClient.PostAsJsonAsync("Marka", carModelRequest);
+        var responseMessage =  await _httpClient.PostAsJsonAsync("Model", carModelRequest);
         return responseMessage.StatusCode;
     }
 
@@ -74,5 +74,5 @@ public class CarDetailsService : ICarDetailsService
         await _httpClient.PutAsJsonAsync($"Model?id={modelId}", carModelRequest);
     }
 
-    #endregion
+    #endregion  
 }

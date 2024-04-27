@@ -1,0 +1,55 @@
+﻿@using Sughd.Auto.Admin.AuthService.ResponseModel
+@using Sughd.Auto.Admin.AuthService.RequestModel
+@using Microsoft.VisualBasic
+<MudDialog>
+    <DialogContent>
+        <MudSelect @bind-Value="@newRoleId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
+            @foreach (var role in Roles)
+            {
+                <MudSelectItem size="@Size.Medium" Value="@role.Id">@role.Name</MudSelectItem>
+            }
+        </MudSelect>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+
+    long newRoleId = default;
+    [Inject] ISnackbar Snackbar { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public UserResponseModel User { get; set; }
+    [Parameter] public List<RoleResponseModel> Roles { get; set; }
+
+    async Task Submit()
+    {
+        var checkExistRoleInUser = User.Roles.FirstOrDefault(u => u.Id == newRoleId);
+        if (checkExistRoleInUser != null)
+        {
+            //Need show same message that user already has this Role
+            return;
+        }
+
+        //This change fro: when added new role it should be show to Table roles
+        //without any request to backend.
+        User.Roles.Add(Roles.FirstOrDefault(r => r.Id == newRoleId));
+        
+        var userUpdate = new UserUpdateRequestModel()
+        {
+            Email = User.Email,
+            UserName = User.UserName,
+            Password = User.Password,
+            PhoneNumber = User.PhoneNumber,
+            RefreshToken = User.RefreshToken,
+            RoleIds = User.Roles.Select(r=>r.Id).ToList()
+        };
+        
+        userUpdate.RoleIds.Add(newRoleId);
+        await _userService.Update(User.Id,userUpdate);
+        
+        MudDialog.Close(DialogResult.Ok(true));
+    } 
+    void Cancel() => MudDialog.Cancel();
+}

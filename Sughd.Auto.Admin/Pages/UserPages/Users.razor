@@ -1,5 +1,188 @@
 ﻿@page "/Users"
+@using Sughd.Auto.Admin.AuthService.ResponseModel
+@using Sughd.Auto.Admin.AuthService.RequestModel
 
+<MudTable Items="@_users" Hover="true"
+          Class="m-4"
+          ReadOnly="@ronly"
+          SortLabel="Sort By"
+          Loading="@_loading"
+          Filter="new Func<UserResponseModel, bool>(SearchByName)"
+          CanCancelEdit="@canCancelEdit"
+          @bind-SelectedItem="_selectedModel"
+          CommitEditTooltip="Commit Edit"
+          RowEditPreview="BackupItem"
+          RowEditCancel="ResetItemToOriginalValues"
+          RowEditCommit="ItemHasBeenCommitted">
+
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Users</MudText>
+        <MudSpacer/>
+        <MudTextField @bind-Value="searchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResponseModel, object>(x => x.Id)">Id</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResponseModel, object>(x => x.UserName)">UserName</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResponseModel, object>(x => x.Password)">Password</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResponseModel, object>(x => x.PhoneNumber)">PhoneNumber</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResponseModel, object>(x => x.Email)">Email</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResponseModel, object>(x => x.RefreshToken)">RefreshToken</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortBy="new Func<UserResponseModel, object>(x => x.Roles)">Roles</MudTableSortLabel>
+        </MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="UserName">@context.UserName</MudTd>
+        <MudTd DataLabel="Password">@context.Password</MudTd>
+        <MudTd DataLabel="PhoneNumber">@context.PhoneNumber</MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="RefreshToken">@context.RefreshToken</MudTd>
+        <MudTd DataLabel="Roles">
+            <MudButton OnClick="@(() => OpenDialog(context))" Variant="Variant.Filled" Color="Color.Primary">
+                Roles
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+
+    <RowEditingTemplate>
+        
+        <MudTd DataLabel="Id">
+            <MudTextFiel>Can not update</MudTextFiel>
+        </MudTd>
+
+        <MudTd DataLabel="UserName">
+            <MudTextField @bind-Value="@context.UserName"/>
+        </MudTd>
+        
+        <MudTd DataLabel="Password">
+            <MudTextField @bind-Value="@context.Password"/>
+        </MudTd>
+        
+        <MudTd DataLabel="PhoneNumber">
+            <MudTextField @bind-Value="@context.PhoneNumber"/>
+        </MudTd>
+        
+        <MudTd DataLabel="Email">
+            <MudTextField @bind-Value="@context.Email"/>
+        </MudTd>
+
+        <MudTd DataLabel="RefreshToken">
+            <MudTextFiel>Can not update</MudTextFiel>
+        </MudTd>
+
+        <MudTd DataLabel="Roles">
+            <MudTextFiel>Can not update</MudTextFiel>
+        </MudTd>
+        
+    </RowEditingTemplate>
+
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }"/>
+    </PagerContent>
+
+</MudTable>
+<MudCard Class="m-4">
+    <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
+</MudCard>
 @code {
+    private bool enabled = true;
+    private string searchTerm = "";
+    private bool ronly = true;
+    private bool _loading = true;
+    private bool canCancelEdit = true;
+    private UserResponseModel _selectedModel = null;
+    private UserResponseModel _userResponseModel = null;
+    private RoleResponseModel _role;
+    private UserResponseModel _userBeforeEdit = null;
+    private List<UserResponseModel>? _users = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _users = await _userService.Get(100,0);
+        _loading = false;
+    }
+
+    private bool SearchByName(UserResponseModel carModelResponseModel)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return true;
+
+        if (carModelResponseModel.Email.Contains(searchTerm))
+            return true;
+        if (carModelResponseModel.UserName.Contains(searchTerm))
+            return true;
+        return false;
+    }
+
+    private void NavigateToAddModelPage()
+    {
+        Navigation.NavigateTo(PageBlazor.ADD_MODEL);
+    }
+   
+    #region Edit Table
+
+    private void BackupItem(object element)
+    {
+        _userBeforeEdit = new UserResponseModel()
+        {
+            UserName = ((UserResponseModel)element).UserName,
+            Email = ((UserResponseModel)element).Email,
+            Password = ((UserResponseModel)element).Password,
+            PhoneNumber = ((UserResponseModel)element).PhoneNumber
+        };
+    }
+
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((UserResponseModel)element).UserName = _userBeforeEdit.UserName;
+        ((UserResponseModel)element).Email = _userBeforeEdit.Email;
+        ((UserResponseModel)element).Password = _userBeforeEdit.Password;
+        ((UserResponseModel)element).PhoneNumber = _userBeforeEdit.PhoneNumber;
+    }
+
+    private void ItemHasBeenCommitted(object element)
+    {
+        var userResponseModel = (UserResponseModel)element;
+
+        var register = new UserUpdateRequestModel
+        {
+            UserName = userResponseModel.UserName,
+            PhoneNumber = userResponseModel.PhoneNumber,
+            Password = userResponseModel.Password,
+            Email = userResponseModel.Email,
+            RefreshToken = _selectedModel.RefreshToken,
+            RoleIds = _selectedModel.Roles.Select(s=>s.Id).ToList()
+        };
+        
+        _userService.Update(userResponseModel.Id, register);
+    }
     
+    #endregion
+    
+    #region Show Role in ShowRoleDialog
+
+    private void OpenDialog(UserResponseModel userResponseModel)
+    {
+        var parameters = new DialogParameters<ShowRoleDialog>();
+        parameters.Add(x => x.User, userResponseModel);
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        DialogService.Show<ShowRoleDialog>("Roles", parameters, options);
+    }
+
+    #endregion
 }

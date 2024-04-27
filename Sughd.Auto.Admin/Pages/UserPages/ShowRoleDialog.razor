@@ -1,0 +1,63 @@
+﻿@using Sughd.Auto.Admin.AuthService.ResponseModel
+@using Sughd.Auto.Admin.AuthService.RequestModel
+<MudDialog >
+    <DialogActions>
+        <MudTable Items="@User.Roles" Hover="true" Class="m-4">
+            <ToolBarContent>
+                <MudButton OnClick="@(() => OpenAddRoleDialog(User))" Class="m-4" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small">Add new Role</MudButton>
+            </ToolBarContent>
+
+            <HeaderContent>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<RoleResponseModel, object>(x => x.Id)">Id</MudTableSortLabel>
+                </MudTh>
+                <MudTh>
+                    <MudTableSortLabel SortBy="new Func<RoleResponseModel, object>(x => x.Name)">Name</MudTableSortLabel>
+                </MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="CarNumber">@context.Name</MudTd>
+                <MudTd DataLabel="CarNumber">
+                    <MudButton OnClick="@(async () => await Delete(context))" Color="Color.Primary">Delete</MudButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public UserResponseModel User { get; set; }
+
+    async Task Delete(RoleResponseModel role)
+    {
+        //This change for: when delete role from UI, role should be delete from UI role list.
+        //for shoe roles used User.Roles
+        User.Roles.Remove(role);
+
+        var userUpdate = new UserUpdateRequestModel()
+        {
+            Email = User.Email,
+            UserName = User.UserName,
+            Password = User.Password,
+            PhoneNumber = User.PhoneNumber,
+            RefreshToken = User.RefreshToken,
+            RoleIds = User.Roles.Select(r=>r.Id).ToList()
+        };
+        
+        await _userService.Update(User.Id, userUpdate);
+    }
+
+    async Task OpenAddRoleDialog(UserResponseModel userResponseModel)
+    {
+        var roles = await _roleService.Get(100, 0);
+        
+        var parameters = new DialogParameters<AddRoleDialog>();
+        parameters.Add(x => x.User, userResponseModel);
+        parameters.Add(x => x.Roles, roles);
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        DialogService.Show<AddRoleDialog>("Add rols", parameters, options);
+    }
+}

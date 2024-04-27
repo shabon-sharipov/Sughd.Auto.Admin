@@ -27,7 +27,7 @@
                     StartIcon="@Icons.Material.Filled.Save"
                     Color="Color.Info"
                     Size="Size.Medium"
-                    OnClick="@(async () => await SaveMarka())">
+                    OnClick="@(async () => await SaveModel())">
                     Save
                 </MudButton>
             </MudCardActions>
@@ -45,7 +45,7 @@
         await GetCarMarka();
     }
 
-    private async Task SaveMarka()
+    private async Task SaveModel()
     {
         await form.Validate();
 
@@ -54,7 +54,7 @@
             var result = await _carDetailsService.AddCarModel(_model);
             if (result == HttpStatusCode.OK)
             {
-                Navigation.NavigateTo(PageBlazor.MARKA);
+                Navigation.NavigateTo(PageBlazor.MODEL);
             }
         }
     }
@@ -66,6 +66,6 @@
 
     private void NavigateToMarkaPage()
     {
-        Navigation.NavigateTo(PageBlazor.MARKA);
+        Navigation.NavigateTo(PageBlazor.MODEL);
     }
 }

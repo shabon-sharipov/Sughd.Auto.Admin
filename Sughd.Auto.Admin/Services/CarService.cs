@@ -37,6 +37,6 @@ public class CarService : ICarService
 
     public async Task Update(long carId, CarRequestModel carRequestModel)
     {
-        var s= await _httpClient.PutAsJsonAsync($"Car?id={carId}", carRequestModel);
+        await _httpClient.PutAsJsonAsync($"Car?id={carId}", carRequestModel);
     }
 }
