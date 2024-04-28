@@ -156,7 +156,7 @@
         {
             _car.UserId = _userInfoForSaleCarResponseModels.FirstOrDefault(u => u.PhoneNumber == _phoneNumber)!.Id;
             _car.Images = _images;
-            var result = await _carService.Post(_car);
+            var result = await _carService.Post(_car, _authenticationStateProvider);
             if (result == HttpStatusCode.OK)
             {
                 Navigation.NavigateTo(PageBlazor.CARS);

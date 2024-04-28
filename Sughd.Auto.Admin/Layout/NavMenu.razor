@@ -8,38 +8,36 @@
                     Match="NavLinkMatch.All">
             Dashboard
         </MudNavLink>
-        <MudNavGroup Title="Registration cars"
-                     Icon="@Icons.Material.Filled.DirectionsCarFilled"
-                     Expanded="false">
-            <MudNavLink Href="@PageBlazor.CARS">Cars</MudNavLink>
-            <MudNavLink Href="@PageBlazor.MARKA">Marka</MudNavLink>
-            <MudNavLink Href="/Model">Model</MudNavLink>
-        </MudNavGroup>
-        <MudNavLink Href="/Users"
-                    IconColor="Color.Inherit"
-                    Icon="@Icons.Material.Filled.People"
-                    Match="NavLinkMatch.All">
-            Users
-        </MudNavLink>
-        <MudNavGroup Icon="@Icons.Material.Rounded.VerifiedUser"
-                     Title="Authentication"
-                     HideExpandIcon="true">
-            <MudStack Spacing="2"
-                      Class="my-2">
-                <MudNavLink Href="/login"
-                            IconColor="Color.Inherit"
-                            Icon="@Icons.Material.Rounded.Person"
-                            Match="NavLinkMatch.All">
-                    Login
-                </MudNavLink>
-                <MudNavLink Href="/register"
-                            IconColor="Color.Inherit"
-                            Icon="@Icons.Material.Rounded.HowToReg"
-                            Match="NavLinkMatch.All">
-                    Register
-                </MudNavLink>
-            </MudStack>
-        </MudNavGroup>
+        <AuthorizeView Roles="Admin, Moderator, Worker">
+            <MudNavGroup Title="Registration cars"
+                         Icon="@Icons.Material.Filled.DirectionsCarFilled"
+                         Expanded="false">
+                <MudNavLink Href="@PageBlazor.CARS">Cars</MudNavLink>
+                <MudNavLink Href="@PageBlazor.MARKA">Marka</MudNavLink>
+                <MudNavLink Href="/Model">Model</MudNavLink>
+            </MudNavGroup>
+        </AuthorizeView>
+        <AuthorizeView Roles="Admin, Moderator">
+            <MudNavLink Href="/Users"
+                        IconColor="Color.Inherit"
+                        Icon="@Icons.Material.Filled.People"
+                        Match="NavLinkMatch.All">
+                Users
+            </MudNavLink>
+            <MudNavGroup Icon="@Icons.Material.Rounded.VerifiedUser"
+                         Title="Authentication"
+                         HideExpandIcon="true">
+                <MudStack Spacing="2"
+                          Class="my-2">
+                    <MudNavLink Href="/register"
+                                IconColor="Color.Inherit"
+                                Icon="@Icons.Material.Rounded.HowToReg"
+                                Match="NavLinkMatch.All">
+                        Register
+                    </MudNavLink>
+                </MudStack>
+            </MudNavGroup>
+        </AuthorizeView>
         <MudNavLink Href="/profile"
                     IconColor="Color.Inherit"
                     Icon="@Icons.Material.Rounded.Person"
@@ -58,4 +56,5 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
 }

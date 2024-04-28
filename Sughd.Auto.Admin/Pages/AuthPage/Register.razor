@@ -1,6 +1,4 @@
 ﻿@page "/register"
-@using System.Text.RegularExpressions
-@using Sughd.Auto.Admin.AuthService.RequestModel
 
 <MudContainer Class="mt-15">
     <MudGrid Justify="Justify.Center" AlignItems="AlignItems.Center">
@@ -52,7 +50,7 @@
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
                            Class="ml-auto"
-                           OnClick="async () => await SaveCar()">
+                           OnClick="async () => await RegisterNewUser()">
                     Register
                 </MudButton>
                 <MudButton Variant="Variant.Filled"
@@ -98,7 +96,7 @@
         return null;
     }
 
-    private async Task SaveCar()
+    private async Task RegisterNewUser()
     {
         await form.Validate();
         if (form.IsValid)

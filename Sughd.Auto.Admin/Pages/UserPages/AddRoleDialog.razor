@@ -47,7 +47,7 @@
         };
         
         userUpdate.RoleIds.Add(newRoleId);
-        await _userService.Update(User.Id,userUpdate);
+        await _userService.Update(User.Id,userUpdate, _authenticationStateProvider);
         
         MudDialog.Close(DialogResult.Ok(true));
     } 

@@ -19,11 +19,18 @@
 @inject IRoleService _roleService;
 @inject IUserService _userService;
 @inject ISearchService _searchService
+@inject IUploadImageService _UploadImageService
 @inject IAuthService _authService;
 @inject NavigationManager Navigation
 @using Sughd.Auto.Admin.Services.HelperModels
 @using MudBlazor.Components
 @inject IDialogService DialogService
+@inject AuthenticationStateProvider _authStateProvider
+@using System.Text.RegularExpressions
+@using Sughd.Auto.Admin.AuthService.RequestModel
 @using System.Net
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Authorization
 @using Sughd.Auto.Admin.AuthService
+@using Sughd.Auto.Admin.AuthService.Utility
+@inject CustomAuthenticationStateProvider _authenticationStateProvider

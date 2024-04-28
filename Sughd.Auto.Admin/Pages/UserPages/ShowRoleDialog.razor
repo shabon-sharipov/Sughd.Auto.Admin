@@ -47,12 +47,12 @@
             RoleIds = User.Roles.Select(r=>r.Id).ToList()
         };
         
-        await _userService.Update(User.Id, userUpdate);
+        await _userService.Update(User.Id, userUpdate, _authenticationStateProvider);
     }
 
     async Task OpenAddRoleDialog(UserResponseModel userResponseModel)
     {
-        var roles = await _roleService.Get(100, 0);
+        var roles = await _roleService.Get(100, 0, _authenticationStateProvider);
         
         var parameters = new DialogParameters<AddRoleDialog>();
         parameters.Add(x => x.User, userResponseModel);

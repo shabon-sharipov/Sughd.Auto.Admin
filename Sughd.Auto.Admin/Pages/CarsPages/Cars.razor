@@ -327,7 +327,7 @@
             Color = ((CarResponseModels)element).Color
         };
 
-        _carService.Update(carResponseModels.Id, carRequest);
+        _carService.Update(carResponseModels.Id, carRequest, _authenticationStateProvider);
     }
     
     #endregion

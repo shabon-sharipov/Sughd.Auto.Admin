@@ -1,8 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
-using Newtonsoft.Json;
+using Sughd.Auto.Admin.AuthService.Utility;
+using Sughd.Auto.Admin.Services.HelperModels;
 using Sughd.Auto.Admin.Services.RequestModels;
 using Sughd.Auto.Admin.Services.ResponseModels;
 
@@ -10,9 +9,9 @@ namespace Sughd.Auto.Admin.Services;
 
 public interface ICarService
 {
-    Task<HttpStatusCode> Post(CarRequestModel carRequestModel);
+    Task<HttpStatusCode> Post(CarRequestModel carRequestModel, CustomAuthenticationStateProvider authenticationStateProvider);
     Task<List<CarResponseModels> ?> Get(int pageSize, int offSet);
-    Task Update(long carId, CarRequestModel carRequestModel);
+    Task Update(long carId, CarRequestModel carRequestModel, CustomAuthenticationStateProvider authenticationStateProvider);
 }
 
 public class CarService : ICarService
@@ -24,19 +23,22 @@ public class CarService : ICarService
         _httpClient = httpClient;
     }
 
-    public async Task<HttpStatusCode> Post(CarRequestModel carRequestModel)
-    { 
-        var responseMessage =  await _httpClient.PostAsJsonAsync("Car", carRequestModel);
+    public async Task<HttpStatusCode> Post(CarRequestModel carRequestModel, CustomAuthenticationStateProvider authenticationStateProvider)
+    {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
+        var responseMessage = await _httpClient.PostAsJsonAsync("Car", carRequestModel);
         return responseMessage.StatusCode;
     }
-    
-    public async Task<List<CarResponseModels>?> Get(int pageSize, int offSet)
+
+    public async Task<List<CarResponseModels> ?> Get(int pageSize, int offSet)
     {
-        return await _httpClient.GetFromJsonAsync<List<CarResponseModels>>($"Car/GetAll?pageSize={pageSize}&offSet={offSet}");
+        return await _httpClient.GetFromJsonAsync<List<CarResponseModels>>(
+            $"Car/GetAll?pageSize={pageSize}&offSet={offSet}");
     }
 
-    public async Task Update(long carId, CarRequestModel carRequestModel)
+    public async Task Update(long carId, CarRequestModel carRequestModel, CustomAuthenticationStateProvider authenticationStateProvider)
     {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
         await _httpClient.PutAsJsonAsync($"Car?id={carId}", carRequestModel);
     }
 }

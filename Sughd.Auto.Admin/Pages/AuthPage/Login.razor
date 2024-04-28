@@ -1,0 +1,57 @@
+﻿@page "/login"
+
+<MudContainer Class="mt-15">
+    <MudGrid Justify="Justify.Center" AlignItems="AlignItems.Center">
+        <MudItem xs="12" sm="7">
+            <MudPaper Class="pa-4">
+                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField T="string"
+                                  Label="Email"
+                                  Required="true"
+                                  @bind-Value="email"
+                                  For="@(() => email)"/>
+                    <MudTextField T="string"
+                                  Label="Password"
+                                  @bind-Value="password"
+                                  For="@(() => password)"
+                                  Required="true"/>
+                </MudForm>
+            </MudPaper>
+            <MudPaper Class="pa-4 mt-4">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Class="ml-auto"
+                           OnClick="async () => await LogIn()">
+                    Register
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           DisableElevation="true"
+                           OnClick="@(() => form.ResetAsync())">
+                    Reset
+                </MudButton>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    bool success;
+    string[] errors = { };
+    MudTextField<string> pwField1;
+    MudForm form;
+    string email = "";
+    string password = "";
+
+
+    private async Task LogIn()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            await _authService.Login(email, password);
+            await form.ResetAsync();
+        }
+    }
+
+}
