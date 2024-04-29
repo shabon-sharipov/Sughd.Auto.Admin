@@ -1,4 +1,5 @@
 ﻿@page "/AddCar"
+@using System.Net.Http.Headers
 
 <MudButton Class="m-4" OnClick="@(() => NavigateToCarsPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small"></MudButton>
 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
@@ -81,11 +82,11 @@
                 <MudAutocomplete T="string" Label="User phone number" @bind-Value="_phoneNumber" SearchFunc="@SearchUser" Required="true"/>
 
                 @* _images  *@
-                @if (_filesForShowToUser != null)
+                @if (_imagesForShow != null)
                 {
-                    <MudText Typo="@Typo.h6">@_filesForShowToUser.Count() File@(_filesForShowToUser.Count() == 1 ? "" : "s"):</MudText>
+                    <MudText Typo="@Typo.h6">@_imagesForShow.Count() File@(_imagesForShow.Count() == 1 ? "" : "s"):</MudText>
                     <MudList>
-                        @foreach (var file in _filesForShowToUser)
+                        @foreach (var file in _imagesForShow)
                         {
                             <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
                                 @file.Name <code>@file.Size bytes</code>
@@ -93,7 +94,7 @@
                         }
                     </MudList>
                 }
-                <MudFileUpload T="IBrowserFile" OnFilesChanged="UploadImage">
+                <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="UploadImage">
                     <ButtonTemplate>
                         <MudButton HtmlTag="label"
                                    Variant="Variant.Filled"
@@ -140,8 +141,8 @@
     private List<CarMarkaResponsModel> _carMarkaResponsModels = new();
     private List<CarModelResponseModel> _carModelResponseModels = new();
     private List<UserInfoForSaleCarResponseModel> _userInfoForSaleCarResponseModels = new();
-    readonly IList<IBrowserFile> _filesForShowToUser = new List<IBrowserFile>();
-    private readonly List<string> _images = new();
+    IList<IBrowserFile> _imagesForShow = new List<IBrowserFile>();
+    List<string> _imageUrlsForSetToCar = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -155,7 +156,7 @@
         if (form.IsValid)
         {
             _car.UserId = _userInfoForSaleCarResponseModels.FirstOrDefault(u => u.PhoneNumber == _phoneNumber)!.Id;
-            _car.Images = _images;
+            _car.Images = _imageUrlsForSetToCar;
             var result = await _carService.Post(_car, _authenticationStateProvider);
             if (result == HttpStatusCode.OK)
             {
@@ -197,24 +198,36 @@
         return userInfoForSaleCarResponseModels.Select(s => s.PhoneNumber);
     }
 
-    private async Task UploadImage(InputFileChangeEventArgs fileChangeEventArgs)
+    private async Task UploadImage(InputFileChangeEventArgs files)
     {
-        var maxAllowedSize = 2 * 1024 * 1024;
+        IReadOnlyList<IBrowserFile> _selectedFiles;
+        _selectedFiles = files.GetMultipleFiles();
 
-        foreach (var file in fileChangeEventArgs.GetMultipleFiles())
+        if (_selectedFiles == null || !_selectedFiles.Any())
         {
-            using var strem = file.OpenReadStream(maxAllowedSize);
-            using var ms = new MemoryStream();
-            await strem.CopyToAsync(ms);
-            _images.Add($"data:{file.ContentType}; base64, {Convert.ToBase64String(ms.ToArray())}");
-            _filesForShowToUser.Add(fileChangeEventArgs.File);
+            Console.WriteLine("No files selected");
+            return;
         }
+
+        if (_selectedFiles.Count == 0) return;
+
+        var content = new MultipartFormDataContent();
+
+        foreach (var file in _selectedFiles)
+        {
+            var stream = file.OpenReadStream(file.Size);
+            var contentFile = new StreamContent(stream);
+            contentFile.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            content.Add(contentFile, "images", file.Name);
+            _imagesForShow.Add(file);
+        }
+
+        _imageUrlsForSetToCar = await _UploadImageService.UploadImageFile(content);
     }
 
     private void DeleteImage()
     {
-        _filesForShowToUser.Clear();
-        _images.Clear();
+        _imagesForShow.Clear();
     }
 
     private void NavigateToCarsPage()
