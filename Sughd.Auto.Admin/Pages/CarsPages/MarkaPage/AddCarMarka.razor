@@ -1,31 +1,34 @@
 ﻿@page "/AddMarka"
 
-<MudButton Class="m-4" OnClick="@(() => NavigateToMarkaPage())" 
-           Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small"></MudButton>
-<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-    <MudCard Class="w-25 mb-4">
-        <MudCardContent>
-            <MudText Align="Align.Center" Class="mb-n4">Marka Registration</MudText>
-            <MudForm @ref="form">
-                <MudTextField @bind-Value="_marka.Name"
-                              For="@(() => _marka.Name)"
-                              Immediate="true"
-                              Label="Marka"
-                              Id=""/>
-            </MudForm>
-            <MudCardActions>
-                <MudButton
-                    Variant="Variant.Filled"
-                    StartIcon="@Icons.Material.Filled.Save"
-                    Color="Color.Info"
-                    Size="Size.Medium"
-                    OnClick="@(async () => await SaveMarka())">
-                    Save
-                </MudButton>
-            </MudCardActions>
-        </MudCardContent>
-    </MudCard>
-</MudStack>
+<MudButton Class="m-4" OnClick="@(() => NavigateToMarkaPage())"
+           Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small">
+</MudButton>
+<MudContainer Class="mt-15">
+    <MudGrid Justify="Justify.Center" AlignItems="AlignItems.Center">
+        <MudItem xs="12" sm="7">
+            <MudPaper Class="pa-4">
+                <MudText Align="Align.Center" Class="mb-n4">Marka Registration</MudText>
+                <MudForm @ref="form">
+                    <MudTextField @bind-Value="_marka.Name"
+                                  For="@(() => _marka.Name)"
+                                  Immediate="true"
+                                  Label="Marka"
+                                  Id=""/>
+                </MudForm>
+                <MudCardActions>
+                    <MudButton
+                        Variant="Variant.Filled"
+                        StartIcon="@Icons.Material.Filled.Save"
+                        Color="Color.Info"
+                        Size="Size.Medium"
+                        OnClick="@(async () => await SaveMarka())">
+                        Save
+                    </MudButton>
+                </MudCardActions>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
 @code{
     private CarMarkaRequest _marka = new();
@@ -38,7 +41,7 @@
     private async Task SaveMarka()
     {
         await form.Validate();
-        
+
         if (form.IsValid)
         {
             var result = await _carDetailsService.AddCarMarka(_marka);
@@ -48,9 +51,10 @@
             }
         }
     }
-    
+
     private void NavigateToMarkaPage()
     {
         Navigation.NavigateTo(PageBlazor.MARKA);
     }
+
 }

@@ -8,11 +8,11 @@ namespace Sughd.Auto.Admin.Services;
 
 public interface ICarDetailsService
 {
-    Task<List<CarMarkaResponsModel>> GetCarMarka();
+    Task<List<CarMarkaResponsModel> ?> GetCarMarka();
     Task UpdateCarMarka(long markaId, CarMarkaRequest carMarkaRequest);
     Task<HttpStatusCode> AddCarMarka(CarMarkaRequest carMarkaRequest);
-    Task<List<CarModelResponseModel>> GetCarModelByMarkaId(long markaId);
-    Task<List<CarModelResponseModel>> GetCarModel();
+    Task<List<CarModelResponseModel> ?> GetCarModelByMarkaId(long markaId);
+    Task<List<CarModelResponseModel> ?> GetCarModel();
     Task<HttpStatusCode> AddCarModel(CarModelRequest carModelRequest);
     Task UpdateCarModel(long modelId, CarModelRequest carModelRequest);
 }
@@ -28,7 +28,7 @@ public class CarDetailsService : ICarDetailsService
 
     #region Marka
 
-    public async Task<List<CarMarkaResponsModel>> GetCarMarka()
+    public async Task<List<CarMarkaResponsModel> ?> GetCarMarka()
     {
         var carMarka =
             await _httpClient.GetFromJsonAsync<List<CarMarkaResponsModel>>("Marka/GetAll?offSet=0&pageSize=100");
@@ -45,7 +45,7 @@ public class CarDetailsService : ICarDetailsService
         var responseMessage =  await _httpClient.PostAsJsonAsync("Marka", carMarkaRequest);
         return responseMessage.StatusCode;
     }
-    public async Task<List<CarModelResponseModel>> GetCarModelByMarkaId(long markaId)
+    public async Task<List<CarModelResponseModel> ?> GetCarModelByMarkaId(long markaId)
     {
         var models =
             await _httpClient.GetFromJsonAsync<List<CarModelResponseModel>>($"Model/GetByMarkaId?markaId={markaId}");
@@ -56,7 +56,7 @@ public class CarDetailsService : ICarDetailsService
 
     #region Models
 
-    public async Task<List<CarModelResponseModel>> GetCarModel()
+    public async Task<List<CarModelResponseModel> ?> GetCarModel()
     {
         var carMarka =
             await _httpClient.GetFromJsonAsync<List<CarModelResponseModel>>("Model/GetAll?offSet=0&pageSize=100");

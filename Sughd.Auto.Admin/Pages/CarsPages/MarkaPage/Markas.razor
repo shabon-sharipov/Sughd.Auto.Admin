@@ -58,7 +58,7 @@
     private bool canCancelEdit = true;
     private CarMarkaResponsModel selectedMark = null;
     private CarMarkaResponsModel marksBeforeEdit = null;
-    private List<CarMarkaResponsModel> _markas = new();
+    private List<CarMarkaResponsModel> ? _markas = new();
 
     protected override async Task OnInitializedAsync()
     {

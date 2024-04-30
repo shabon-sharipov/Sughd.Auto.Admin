@@ -23,7 +23,7 @@ public class CarRequestModel
     public bool IsRastamogeno { get; set; }
 
     [Required(AllowEmptyStrings = false, ErrorMessage = "Please provide Images")]
-    public List<string> Images { get; set; }
+    public List<string> ? Images { get; set; } = new();
 
     public bool IsActive { get; set; }
     

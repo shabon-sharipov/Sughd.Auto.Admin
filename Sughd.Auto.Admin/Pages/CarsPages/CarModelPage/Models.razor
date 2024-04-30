@@ -70,9 +70,9 @@
     private bool _loading = true;
     private bool canCancelEdit = true;
     private CarModelResponseModel _selectedModel = null;
-    private List<CarMarkaResponsModel> _carMarkaResponsModels = new();
+    private List<CarMarkaResponsModel> ? _carMarkaResponsModels = new();
     private CarModelResponseModel _modelsBeforeEdit = null;
-    private List<CarModelResponseModel> _models = new();
+    private List<CarModelResponseModel> ? _models = new();
 
     protected override async Task OnInitializedAsync()
     {

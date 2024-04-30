@@ -2,43 +2,47 @@
 
 @using System.Net
 
-<MudButton Class="m-4" OnClick="@(() => NavigateToMarkaPage())" 
-           Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small"></MudButton>
-<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-    <MudCard Class="w-25 mb-4">
-        <MudCardContent>
-            <MudText Align="Align.Center" Class="mb-n4">Marka Registration</MudText>
-            <MudForm @ref="form">
-                <MudTextField @bind-Value="_model.Name"
-                              For="@(() => _model.Name)"
-                              Immediate="true"
-                              Label="Marka"
-                              Id=""/>
-                <MudSelect Label="Mark" @bind-Value="_model.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
-                    @foreach (var markaResponsModel in _carMarkaResponsModels)
-                    {
-                        <MudSelectItem Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudForm>
-            <MudCardActions>
-                <MudButton
-                    Variant="Variant.Filled"
-                    StartIcon="@Icons.Material.Filled.Save"
-                    Color="Color.Info"
-                    Size="Size.Medium"
-                    OnClick="@(async () => await SaveModel())">
-                    Save
-                </MudButton>
-            </MudCardActions>
-        </MudCardContent>
-    </MudCard>
-</MudStack>
+<MudButton Class="m-4" OnClick="@(() => NavigateToMarkaPage())"
+           Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small">
+</MudButton>
+<MudContainer Class="mt-15">
+    <MudGrid Justify="Justify.Center" AlignItems="AlignItems.Center">
+        <MudItem xs="12" sm="7">
+            <MudPaper Class="pa-4">
+                <MudText Align="Align.Center" Class="mb-n4">Model Registration</MudText>
+                <MudForm @ref="form">
+                    <MudSelect Label="Mark" @bind-Value="_model.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
+                        @foreach (var markaResponsModel in _carMarkaResponsModels)
+                        {
+                            <MudSelectItem Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                    
+                    <MudTextField @bind-Value="_model.Name"
+                                  For="@(() => _model.Name)"
+                                  Immediate="true"
+                                  Label="Model"
+                                  Id=""/>
+                </MudForm>
+                <MudCardActions>
+                    <MudButton
+                        Variant="Variant.Filled"
+                        StartIcon="@Icons.Material.Filled.Save"
+                        Color="Color.Info"
+                        Size="Size.Medium"
+                        OnClick="@(async () => await SaveModel())">
+                        Save
+                    </MudButton>
+                </MudCardActions>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
 @code{
     MudForm form;
     private CarModelRequest _model = new();
-    private List<CarMarkaResponsModel> _carMarkaResponsModels = new();
+    private List<CarMarkaResponsModel> ? _carMarkaResponsModels = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,7 +62,7 @@
             }
         }
     }
-    
+
     private async Task GetCarMarka()
     {
         _carMarkaResponsModels = await _carDetailsService.GetCarMarka();
@@ -68,4 +72,5 @@
     {
         Navigation.NavigateTo(PageBlazor.MODEL);
     }
+
 }

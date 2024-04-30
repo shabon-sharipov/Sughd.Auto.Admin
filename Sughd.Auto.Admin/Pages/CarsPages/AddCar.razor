@@ -1,131 +1,135 @@
 ﻿@page "/AddCar"
 @using System.Net.Http.Headers
 
-<MudButton Class="m-4" OnClick="@(() => NavigateToCarsPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small"></MudButton>
-<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-    <MudCard Class="w-25 mb-4">
-        <MudCardContent>
-            <MudText Align="Align.Center" Class="mb-n4">Car Registration</MudText>
-            <MudForm @ref="@form">
-                <MudTextField @bind-Value="_car.CarNumber"
-                              For="@(() => _car.CarNumber)"
-                              Immediate="true"
-                              Label="Номер автомобил"
-                              Id=""/>
-                <MudTextField @bind-Value="_car.DateOfPablisher"
-                              For="@(() => _car.DateOfPablisher)"
-                              Immediate="true"
-                              Label="Год выпуска"
-                              Id=""/>
-                <MudTextField @bind-Value="_car.Price"
-                              For="@(() => _car.Price)"
-                              Immediate="true"
-                              Label="Цена"
-                              Id=""/>
-                <MudTextField @bind-Value="_car.EngineCapacity"
-                              For="@(() => _car.EngineCapacity)"
-                              Immediate="true"
-                              Label="Оъем двигателя"
-                              Id=""/>
-                <MudTextField @bind-Value="_car.Mileage"
-                              For="@(() => _car.Mileage)"
-                              Immediate="true"
-                              Label="Пробег"
-                              Id=""/>
+<MudButton OnClick="@(() => NavigateToCarsPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small"></MudButton>
+<MudContainer Class="mt-15">
+    <MudGrid Justify="Justify.Center" AlignItems="AlignItems.Center">
+        <MudItem xs="12" sm="7">
+            <MudPaper Class="pa-4">
+                <MudText Align="Align.Center" Class="mb-n4">Car Registration</MudText>
+                <MudForm @ref="@form">
+                    <MudTextField @bind-Value="_car.CarNumber"
+                                  For="@(() => _car.CarNumber)"
+                                  Immediate="true"
+                                  Label="Номер автомобил"
+                                  Id=""/>
+                    <MudTextField @bind-Value="_car.DateOfPablisher"
+                                  For="@(() => _car.DateOfPablisher)"
+                                  Immediate="true"
+                                  Label="Год выпуска"
+                                  Id=""/>
+                    <MudTextField @bind-Value="_car.Price"
+                                  For="@(() => _car.Price)"
+                                  Immediate="true"
+                                  Label="Цена"
+                                  Id=""/>
+                    <MudTextField @bind-Value="_car.EngineCapacity"
+                                  For="@(() => _car.EngineCapacity)"
+                                  Immediate="true"
+                                  Label="Оъем двигателя"
+                                  Id=""/>
+                    <MudTextField @bind-Value="_car.Mileage"
+                                  For="@(() => _car.Mileage)"
+                                  Immediate="true"
+                                  Label="Пробег"
+                                  Id=""/>
 
-                <MudSwitch @bind-Value="_car.IsActive" Color="Color.Info" T="bool" Label="Active"/>
-                <MudSwitch @bind-Value="_car.IsRastamogeno" Color="Color.Info" T="bool" Label="Растаможен в РТ"/>
+                    <MudSwitch @bind-Value="_car.IsActive" Color="Color.Info" T="bool" Label="Active"/>
+                    <MudSwitch @bind-Value="_car.IsRastamogeno" Color="Color.Info" T="bool" Label="Растаможен в РТ"/>
 
-                <MudSelect Label="Тип топлива" @bind-Value="_car.FuelType" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                    @foreach (var fuelType in _fuelTypes)
-                    {
-                        <MudSelectItem Value="@fuelType">@fuelType</MudSelectItem>
-                    }
-                </MudSelect>
-
-                <MudSelect Label="Коробка Передача" @bind-Value="_car.Transmission" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                    @foreach (var transmission in _transmissions)
-                    {
-                        <MudSelectItem Value="@transmission">@transmission</MudSelectItem>
-                    }
-                </MudSelect>
-
-                <MudSelect Label="Кузов" @bind-Value="_car.Color" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                    @foreach (var carBody in _carBodies)
-                    {
-                        <MudSelectItem Value="@carBody">@carBody</MudSelectItem>
-                    }
-                </MudSelect>
-
-                <MudSelect Label="Цвет" @bind-Value="_car.CarBody" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                    @foreach (var color in _colors)
-                    {
-                        <MudSelectItem Value="@color">@color</MudSelectItem>
-                    }
-                </MudSelect>
-
-                <MudSelect Label="Mark" @bind-Value="_car.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
-                           onchange="@(GetModelByMarkaId(_car.MarkaId))">
-                    @foreach (var markaResponsModel in _carMarkaResponsModels)
-                    {
-                        <MudSelectItem Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
-                    }
-                </MudSelect>
-
-                <MudSelect Label="Модел" @bind-Value="_car.ModelId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
-                    @foreach (var modelResponseModel in _carModelResponseModels)
-                    {
-                        <MudSelectItem Value="@modelResponseModel.Id">@modelResponseModel.Name</MudSelectItem>
-                    }
-                </MudSelect>
-
-                <MudAutocomplete T="string" Label="User phone number" @bind-Value="_phoneNumber" SearchFunc="@SearchUser" Required="true"/>
-
-                @* _images  *@
-                @if (_imagesForShow != null)
-                {
-                    <MudText Typo="@Typo.h6">@_imagesForShow.Count() File@(_imagesForShow.Count() == 1 ? "" : "s"):</MudText>
-                    <MudList>
-                        @foreach (var file in _imagesForShow)
+                    <MudSelect Label="Тип топлива" @bind-Value="_car.FuelType" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
+                        @foreach (var fuelType in _fuelTypes)
                         {
-                            <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
-                                @file.Name <code>@file.Size bytes</code>
-                            </MudListItem>
+                            <MudSelectItem Value="@fuelType">@fuelType</MudSelectItem>
                         }
-                    </MudList>
-                }
-                <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="UploadImage">
-                    <ButtonTemplate>
-                        <MudButton HtmlTag="label"
-                                   Variant="Variant.Filled"
-                                   Color="Color.Primary"
-                                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                                   for="@context.Id">
-                            Upload Image
-                        </MudButton>
-                        <MudButton OnClick="DeleteImage"
-                                   Variant="Variant.Filled"
-                                   Color="Color.Primary"
-                                   StartIcon="@Icons.Material.Filled.Clear">
-                            Clear Images
-                        </MudButton>
-                    </ButtonTemplate>
-                </MudFileUpload>
-                @* _images  *@
-            </MudForm>
-            <MudCardActions>
-                <MudButton
-                    Variant="Variant.Filled"
-                    StartIcon="@Icons.Material.Filled.Save"
-                    Color="Color.Info"
-                    Size="Size.Medium"
-                    OnClick="@(async () => await SaveCar())">
-                    Save
-                </MudButton>
-            </MudCardActions>
-        </MudCardContent>
-    </MudCard>
-</MudStack>
+                    </MudSelect>
+
+                    <MudSelect Label="Коробка Передача" @bind-Value="_car.Transmission" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
+                        @foreach (var transmission in _transmissions)
+                        {
+                            <MudSelectItem Value="@transmission">@transmission</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudSelect Label="Кузов" @bind-Value="_car.Color" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
+                        @foreach (var carBody in _carBodies)
+                        {
+                            <MudSelectItem Value="@carBody">@carBody</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudSelect Label="Цвет" @bind-Value="_car.CarBody" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
+                        @foreach (var color in _colors)
+                        {
+                            <MudSelectItem Value="@color">@color</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudSelect Label="Mark" @bind-Value="_car.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
+                               onchange="@(GetModelByMarkaId(_car.MarkaId))">
+                        @foreach (var markaResponsModel in _carMarkaResponsModels)
+                        {
+                            <MudSelectItem Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudSelect Label="Модел" @bind-Value="_car.ModelId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
+                        @foreach (var modelResponseModel in _carModelResponseModels)
+                        {
+                            <MudSelectItem Value="@modelResponseModel.Id">@modelResponseModel.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudAutocomplete T="string" Label="User phone number" @bind-Value="_phoneNumber" SearchFunc="@SearchUser" Required="true"/>
+
+                    @* _images  *@
+                    @if (_imagesForShow != null)
+                    {
+                        <MudText Typo="@Typo.h6">@_imagesForShow.Count() File@(_imagesForShow.Count() == 1 ? "" : "s"):</MudText>
+                        <MudList>
+                            @foreach (var file in _imagesForShow)
+                            {
+                                <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
+                                    @file.Name <code>@file.Size bytes</code>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    }
+                    
+                    <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="UploadImage">
+                    @* _images  *@
+                        <ButtonTemplate>
+                            <MudButton Class="m-1" HtmlTag="label"
+                                       Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload"
+                                       for="@context.Id">
+                                Upload Image
+                            </MudButton>
+                            <MudButton Class="m-1" OnClick="DeleteImage"
+                                       Variant="Variant.Filled"
+                                       Color="Color.Error"
+                                       StartIcon="@Icons.Material.Filled.Clear">
+                                Clear Images
+                            </MudButton>
+                        </ButtonTemplate>
+                    </MudFileUpload>
+                </MudForm>
+                <MudCardActions>
+                    <MudButton
+                        Class="m-1"
+                        Variant="Variant.Filled"
+                        StartIcon="@Icons.Material.Filled.Save"
+                        Color="Color.Tertiary"
+                        Size="Size.Medium"
+                        OnClick="@(async () => await SaveCar())">
+                        Save
+                    </MudButton>
+                </MudCardActions>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
 @code{
 
@@ -138,11 +142,11 @@
     private List<string> _fuelTypes = new();
     private List<string> _transmissions = new();
     private List<string> _colors = new();
-    private List<CarMarkaResponsModel> _carMarkaResponsModels = new();
-    private List<CarModelResponseModel> _carModelResponseModels = new();
+    private List<CarMarkaResponsModel> ? _carMarkaResponsModels = new();
+    private List<CarModelResponseModel> ? _carModelResponseModels = new();
     private List<UserInfoForSaleCarResponseModel> _userInfoForSaleCarResponseModels = new();
     IList<IBrowserFile> _imagesForShow = new List<IBrowserFile>();
-    List<string> _imageUrlsForSetToCar = new();
+    List<string> ? _imageUrlsForSetToCar = new();
 
     protected override async Task OnInitializedAsync()
     {

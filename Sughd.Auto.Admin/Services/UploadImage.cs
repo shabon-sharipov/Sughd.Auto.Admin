@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using FluentFTP;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 
@@ -8,7 +7,7 @@ namespace Sughd.Auto.Admin.Services;
 
 public interface IUploadImageService
 {
-    Task<List<string>> UploadImageFile(MultipartFormDataContent content);
+    Task<List<string> ?> UploadImageFile(MultipartFormDataContent content);
 }
 
 public class UploadImageService : IUploadImageService
@@ -20,7 +19,7 @@ public class UploadImageService : IUploadImageService
         _httpClient = httpClient;
     }
 
-    public async Task<List<string>> UploadImageFile(MultipartFormDataContent content)
+    public async Task<List<string> ?> UploadImageFile(MultipartFormDataContent content)
     {
         var response = await _httpClient.PostAsync("Image/upload", content);
 

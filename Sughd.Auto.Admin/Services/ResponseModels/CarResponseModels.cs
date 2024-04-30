@@ -17,7 +17,7 @@ public class CarResponseModels
 
     public bool IsRastamogeno { get; set; }
 
-    public List<string> Images { get; set; }
+    public List<string> Images { get; set; } = new();
 
     public bool IsActive { get; set; }
 
@@ -28,12 +28,12 @@ public class CarResponseModels
     public string CarBody { get; set; } = string.Empty;
 
     public int UserId { get; set; }
-    public string UserName { get; set; }
-    
-    public CarMarkaResponsModel Marka { get; set; }
+    public string UserName { get; set; } = string.Empty;
+
+    public CarMarkaResponsModel Marka { get; set; } = new();
     public long MarkaId { get; set; }
 
-    public CarModelResponseModel Model { get; set; }
+    public CarModelResponseModel Model { get; set; } = new();
     public long ModelId { get; set; }
 
     public string Color { get; set; } = string.Empty;

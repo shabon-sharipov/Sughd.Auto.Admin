@@ -10,8 +10,8 @@ namespace Sughd.Auto.Admin.AuthService;
 
 public interface IAuthService
 {
-    Task<JwtTokenResponse> Login(string userEmail, string password);
-    Task Logout();
+    Task<JwtTokenResponse ?> Login(string userEmail, string password);
+    void Logout();
     Task<JwtTokenResponse> RefreshToken(string refreshToken);
     Task<UserResponseModel> Register(UserRegisterRequestModel register);
 }
@@ -27,12 +27,11 @@ public class AuthService : IAuthService
         _authenticationStateProvider = authenticationStateProvider;
     }
     
-    public async Task<JwtTokenResponse> Login(string userEmail, string password)
+    public async Task<JwtTokenResponse ?> Login(string userEmail, string password)
     {
         var response =  await _httpClient.PostAsJsonAsync("Auth/login", new LoginRequestModel(){UserEmail = userEmail, Password = password});
         var loginResult = JsonSerializer.Deserialize<JwtTokenResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-        Console.WriteLine(loginResult.AccessToken);
         if (!response.IsSuccessStatusCode)
         {
             return loginResult!;
@@ -44,7 +43,7 @@ public class AuthService : IAuthService
         return loginResult;
     }
 
-    public async Task Logout()
+    public void Logout()
     {
         _httpClient.DefaultRequestHeaders.Authorization = null;
     }

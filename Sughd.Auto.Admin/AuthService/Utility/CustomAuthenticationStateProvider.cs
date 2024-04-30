@@ -71,8 +71,6 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
         try
         {
             var userSession = await _sessionStorage.ReadEncryptedItemAsync<JwtTokenResponse>("UserSession");
-            Console.WriteLine("aa");
-            Console.WriteLine(userSession.AccessToken);
             if (userSession != null)
             {
                 result = userSession.AccessToken;

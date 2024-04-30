@@ -2,7 +2,7 @@
 
 public class JwtTokenResponse
 {
-    public string AccessToken { get; set; }
-    public string RefreshToken { get; set; }
-    public List<RoleResponseModel> Roles { get; set; }
+    public string AccessToken { get; set; } = string.Empty;
+    public string RefreshToken { get; set; } = string.Empty;
+    public List<RoleResponseModel> Roles { get; set; } = new();
 }

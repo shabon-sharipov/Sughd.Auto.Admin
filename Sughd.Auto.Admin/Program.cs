@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using Sughd.Auto.Admin;
 using Sughd.Auto.Admin.AuthService;
 using Sughd.Auto.Admin.Services;
 using Sughd.Auto.Admin.AuthService.Utility;
+using Sughd.Auto.Admin;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
