@@ -1,5 +1,6 @@
 ﻿@page "/Model"
 
+<MudButton Class="ml-3 mt-3" OnClick="@(() => NavigateToAddModelPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Info" Size="Size.Small"/>
 <MudTable Items="@_models" Hover="true"
           Class="m-4"
           ReadOnly="@ronly"
@@ -12,12 +13,11 @@
           RowEditPreview="BackupItem"
           RowEditCancel="ResetItemToOriginalValues"
           RowEditCommit="ItemHasBeenCommitted">
-    
+
     <ToolBarContent>
         <MudText Typo="Typo.h6">Car Model</MudText>
         <MudSpacer/>
         <MudTextField @bind-Value="searchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        <MudButton OnClick="@(() => NavigateToAddModelPage())" Class="m-4" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small">Add new model</MudButton>
     </ToolBarContent>
 
     <HeaderContent>
@@ -40,7 +40,7 @@
 
     <RowEditingTemplate>
         <MudTd DataLabel="Id">
-           <MudTextFiel/>
+            <MudTextFiel/>
         </MudTd>
         <MudTd DataLabel="Name">
             <MudTextField @bind-Value="@context.Name"/>
@@ -63,6 +63,7 @@
 <MudCard Class="m-4">
     <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
 </MudCard>
+
 @code {
     private bool enabled = true;
     private string searchTerm = "";
@@ -95,7 +96,7 @@
     {
         Navigation.NavigateTo(PageBlazor.ADD_MODEL);
     }
-   
+
     #region Edit Table
 
     private void BackupItem(object element)
@@ -112,7 +113,7 @@
         ((CarModelResponseModel)element).Name = _modelsBeforeEdit.Name;
         ((CarModelResponseModel)element).MarkaName = _modelsBeforeEdit.MarkaName;
     }
-    
+
     private async Task GetCarMarka()
     {
         _carMarkaResponsModels = await _carDetailsService.GetCarMarka();
@@ -121,7 +122,7 @@
     private void ItemHasBeenCommitted(object element)
     {
         var carModelResponseModel = (CarModelResponseModel)element;
-        
+
         var carModelRequest = new CarModelRequest
         {
             Name = carModelResponseModel.Name,
@@ -130,6 +131,7 @@
         Console.WriteLine(JsonConvert.SerializeObject(element));
         _carDetailsService.UpdateCarModel(carModelResponseModel.Id, carModelRequest);
     }
-    
+
     #endregion
+
 }

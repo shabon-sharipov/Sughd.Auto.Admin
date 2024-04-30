@@ -41,25 +41,25 @@
             </MudBadge>
             <MudMenu AnchorOrigin="Origin.BottomRight"
                      TransformOrigin="Origin.TopRight">
-                @* <ActivatorContent> *@
-                @*     <MudChip Size="Size.Large" *@
-                @*              Color="Color.Inherit"> *@
-                @*         <MudStack Spacing="0" *@
-                @*                   Row="true" *@
-                @*                   Class="flex flex-row"> *@
-                @*             <MudAvatar> *@
-                @*                 <MudImage Src="https://i.pravatar.cc/300"></MudImage> *@
-                @*             </MudAvatar> *@
-                @*             <MudText Typo="Typo.body2" *@
-                @*                      Class="my-auto">User</MudText> *@
-                @*         </MudStack> *@
-                @*     </MudChip> *@
-                @* </ActivatorContent> *@
+                <ActivatorContent>
+                    <MudChip Size="Size.Large"
+                             Color="Color.Inherit">
+                        <MudStack Spacing="0"
+                                  Row="true"
+                                  Class="flex flex-row">
+                            <MudAvatar>
+                                <MudImage Src="https://i.pravatar.cc/300"></MudImage>
+                            </MudAvatar>
+                            <MudText Typo="Typo.body2"
+                                     Class="my-auto">User</MudText>
+                        </MudStack>
+                    </MudChip>
+                </ActivatorContent>
                 <ChildContent>
                     <MudMenuItem>Profile</MudMenuItem>
                     <MudMenuItem>Theme</MudMenuItem>
                     <MudMenuItem>Usage</MudMenuItem>
-                    <MudMenuItem>Sign Out</MudMenuItem>
+                    <MudMenuItem OnClick="SignOut">Sign Out</MudMenuItem>
                 </ChildContent>
             </MudMenu>
         </MudStack>
@@ -117,4 +117,8 @@
         _isDarkMode = isDarkMode;
     }
 
+    void SignOut()
+    {
+        _authService.Logout();
+    }
 }

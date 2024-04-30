@@ -1,5 +1,6 @@
 ﻿@page "/Cars"
 
+<MudButton Class="ml-3 mt-3" OnClick="@(() => NavigateToAddCarPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Info" Size="Size.Small"/>
 <MudTable Items="@_cars" Hover="true" 
           Class="m-4"
           ReadOnly="@ronly"
@@ -16,7 +17,6 @@
         <MudText Typo="Typo.h6">Cars</MudText>
         <MudSpacer/>
         <MudTextField @bind-Value="searchTerm" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-        <MudButton  OnClick="@(() => NavigateToAddCarPage())" Class="m-4" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Small">Add new car</MudButton>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>
