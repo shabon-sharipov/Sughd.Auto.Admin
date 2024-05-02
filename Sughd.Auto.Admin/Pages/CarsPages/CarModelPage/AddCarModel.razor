@@ -55,7 +55,7 @@
 
         if (form.IsValid)
         {
-            var result = await _carDetailsService.AddCarModel(_model);
+            var result = await _carDetailsService.AddCarModel(_model, _authenticationStateProvider);
             if (result == HttpStatusCode.OK)
             {
                 Navigation.NavigateTo(PageBlazor.MODEL);

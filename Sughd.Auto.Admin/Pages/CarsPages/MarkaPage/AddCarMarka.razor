@@ -44,7 +44,7 @@
 
         if (form.IsValid)
         {
-            var result = await _carDetailsService.AddCarMarka(_marka);
+            var result = await _carDetailsService.AddCarMarka(_marka, _authenticationStateProvider);
             if (result == HttpStatusCode.OK)
             {
                 Navigation.NavigateTo(PageBlazor.MARKA);

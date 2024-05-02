@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Newtonsoft.Json;
+using Sughd.Auto.Admin.AuthService.Utility;
+using Sughd.Auto.Admin.Services.HelperModels;
 using Sughd.Auto.Admin.Services.RequestModels;
 using Sughd.Auto.Admin.Services.ResponseModels;
 
@@ -9,12 +11,12 @@ namespace Sughd.Auto.Admin.Services;
 public interface ICarDetailsService
 {
     Task<List<CarMarkaResponsModel> ?> GetCarMarka();
-    Task UpdateCarMarka(long markaId, CarMarkaRequest carMarkaRequest);
-    Task<HttpStatusCode> AddCarMarka(CarMarkaRequest carMarkaRequest);
+    Task UpdateCarMarka(long markaId, CarMarkaRequest carMarkaRequest, CustomAuthenticationStateProvider authenticationStateProvider);
+    Task<HttpStatusCode> AddCarMarka(CarMarkaRequest carMarkaRequest, CustomAuthenticationStateProvider authenticationStateProvider);
     Task<List<CarModelResponseModel> ?> GetCarModelByMarkaId(long markaId);
     Task<List<CarModelResponseModel> ?> GetCarModel();
-    Task<HttpStatusCode> AddCarModel(CarModelRequest carModelRequest);
-    Task UpdateCarModel(long modelId, CarModelRequest carModelRequest);
+    Task<HttpStatusCode> AddCarModel(CarModelRequest carModelRequest, CustomAuthenticationStateProvider authenticationStateProvider);
+    Task UpdateCarModel(long modelId, CarModelRequest carModelRequest, CustomAuthenticationStateProvider authenticationStateProvider);
 }
 
 public class CarDetailsService : ICarDetailsService
@@ -35,13 +37,15 @@ public class CarDetailsService : ICarDetailsService
         return carMarka;
     }
 
-    public async Task UpdateCarMarka(long markaId, CarMarkaRequest carMarkaRequest)
+    public async Task UpdateCarMarka(long markaId, CarMarkaRequest carMarkaRequest, CustomAuthenticationStateProvider authenticationStateProvider)
     {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
         await _httpClient.PutAsJsonAsync($"Marka?id={markaId}", carMarkaRequest);
     }
 
-    public async Task<HttpStatusCode> AddCarMarka(CarMarkaRequest carMarkaRequest)
+    public async Task<HttpStatusCode> AddCarMarka(CarMarkaRequest carMarkaRequest, CustomAuthenticationStateProvider authenticationStateProvider)
     {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
         var responseMessage =  await _httpClient.PostAsJsonAsync("Marka", carMarkaRequest);
         return responseMessage.StatusCode;
     }
@@ -63,14 +67,16 @@ public class CarDetailsService : ICarDetailsService
         return carMarka;
     }
 
-    public async Task<HttpStatusCode> AddCarModel(CarModelRequest carModelRequest)
+    public async Task<HttpStatusCode> AddCarModel(CarModelRequest carModelRequest, CustomAuthenticationStateProvider authenticationStateProvider)
     {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
         var responseMessage =  await _httpClient.PostAsJsonAsync("Model", carModelRequest);
         return responseMessage.StatusCode;
     }
 
-    public async Task UpdateCarModel(long modelId, CarModelRequest carModelRequest)
+    public async Task UpdateCarModel(long modelId, CarModelRequest carModelRequest, CustomAuthenticationStateProvider authenticationStateProvider)
     {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
         await _httpClient.PutAsJsonAsync($"Model?id={modelId}", carModelRequest);
     }
 

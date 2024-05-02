@@ -129,7 +129,7 @@
             MarkaId = carModelResponseModel.MarkaId
         };
         Console.WriteLine(JsonConvert.SerializeObject(element));
-        _carDetailsService.UpdateCarModel(carModelResponseModel.Id, carModelRequest);
+        _carDetailsService.UpdateCarModel(carModelResponseModel.Id, carModelRequest, _authenticationStateProvider);
     }
 
     #endregion

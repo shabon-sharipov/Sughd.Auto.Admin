@@ -105,7 +105,7 @@
             Name = carMarkaResponsModel.Name
         };
 
-        _carDetailsService.UpdateCarMarka(carMarkaResponsModel.Id, carMarkaRequest);
+        _carDetailsService.UpdateCarMarka(carMarkaResponsModel.Id, carMarkaRequest, _authenticationStateProvider);
     }
 
     #endregion
