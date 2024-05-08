@@ -51,14 +51,14 @@
                         }
                     </MudSelect>
 
-                    <MudSelect Label="Кузов" @bind-Value="_car.Color" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
+                    <MudSelect Label="Кузов" @bind-Value="_car.CarBody" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
                         @foreach (var carBody in _carBodies)
                         {
                             <MudSelectItem Value="@carBody">@carBody</MudSelectItem>
                         }
                     </MudSelect>
 
-                    <MudSelect Label="Цвет" @bind-Value="_car.CarBody" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
+                    <MudSelect Label="Цвет" @bind-Value="_car.Color" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
                         @foreach (var color in _colors)
                         {
                             <MudSelectItem Value="@color">@color</MudSelectItem>
