@@ -63,7 +63,7 @@ public class CarDetailsService : ICarDetailsService
     public async Task<List<CarModelResponseModel> ?> GetCarModel()
     {
         var carMarka =
-            await _httpClient.GetFromJsonAsync<List<CarModelResponseModel>>("Model/GetAll?offSet=0&pageSize=100");
+            await _httpClient.GetFromJsonAsync<List<CarModelResponseModel>>("Model/GetAll?offSet=0&pageSize=10000");
         return carMarka;
     }
 
