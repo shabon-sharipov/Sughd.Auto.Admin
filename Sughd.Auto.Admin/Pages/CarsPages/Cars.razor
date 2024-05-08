@@ -1,5 +1,6 @@
 ﻿@page "/Cars"
 
+<MudText Typo="Typo.h6" Color="Color.Error" Align="Align.Center">@errorMessage</MudText>
 <MudButton Class="ml-3 mt-3" OnClick="@(() => NavigateToAddCarPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Info" Size="Size.Small"/>
 <MudTable Items="@_cars" Hover="true" 
           Class="m-4"
@@ -188,6 +189,7 @@
     <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
 </MudCard>
 @code {
+    private string errorMessage = "";
     private bool enabled = true;
     private string searchTerm = "";
     private bool ronly = true;
@@ -206,6 +208,24 @@
 
     protected override async Task OnInitializedAsync()
     {
+
+        try
+        {
+            var token = await _authenticationStateProvider.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                errorMessage = "You have not access to use Car page!";
+                _loading = false;
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            errorMessage = "You have not access to use Car page!";
+            _loading = false;
+            return;
+        }
+        
         _cars = await _carService.Get(100, 0);
         await GetCarMarka();
         await GetCarDetails();

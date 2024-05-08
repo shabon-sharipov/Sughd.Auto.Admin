@@ -1,4 +1,5 @@
 ﻿@page "/Marka"
+<MudText Typo="Typo.h6" Color="Color.Error" Align="Align.Center">@errorMessage</MudText>
 <MudButton Class="ml-3 mt-3" OnClick="@(() => NavigateToAddMarkaPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Info" Size="Size.Small"/>
 <MudTable Items="@_markas" Hover="true"
           Class="m-4"
@@ -52,6 +53,7 @@
 </MudCard>
 
 @code {
+    private string errorMessage = "";
     private bool enabled = true;
     private string searchTerm = "";
     private bool ronly = true;
@@ -63,6 +65,23 @@
 
     protected override async Task OnInitializedAsync()
     {
+        try
+        {
+            var token = await _authenticationStateProvider.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                errorMessage = "You have not access to use Marka page!";
+                _loading = false;
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            errorMessage = "You have not access to use Marka page!";
+            _loading = false;
+            return;
+        }
+        
         _markas = await _carDetailsService.GetCarMarka();
         _loading = false;
     }

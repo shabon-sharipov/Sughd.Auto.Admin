@@ -1,5 +1,8 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
+using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Sughd.Auto.Admin.AuthService.RequestModel;
 using Sughd.Auto.Admin.AuthService.ResponseModel;
@@ -11,7 +14,7 @@ namespace Sughd.Auto.Admin.AuthService;
 public interface IAuthService
 {
     Task<JwtTokenResponse ?> Login(string userEmail, string password);
-    void Logout();
+    Task Logout();
     Task<JwtTokenResponse> RefreshToken(string refreshToken);
     Task<UserResponseModel> Register(UserRegisterRequestModel register);
 }
@@ -20,22 +23,28 @@ public class AuthService : IAuthService
 {
     private readonly HttpClient _httpClient;
     private readonly AuthenticationStateProvider _authenticationStateProvider;
+    private readonly ISessionStorageService _sessionStorage;
     
-    public AuthService(HttpClient httpClient, AuthenticationStateProvider authenticationStateProvider)
+    
+    public AuthService(HttpClient httpClient, AuthenticationStateProvider authenticationStateProvider, ISessionStorageService sessionStorage)
     {
         _httpClient = httpClient;
         _authenticationStateProvider = authenticationStateProvider;
+        _sessionStorage = sessionStorage;
     }
     
     public async Task<JwtTokenResponse ?> Login(string userEmail, string password)
     {
-        var response =  await _httpClient.PostAsJsonAsync("Auth/login", new LoginRequestModel(){UserEmail = userEmail, Password = password});
-        var loginResult = JsonSerializer.Deserialize<JwtTokenResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
+        var response = await _httpClient.PostAsJsonAsync("Auth/login",
+            new LoginRequestModel() { UserEmail = userEmail, Password = password });
+      
         if (!response.IsSuccessStatusCode)
         {
-            return loginResult!;
+            return new JwtTokenResponse();
         }
+        
+        var loginResult = JsonSerializer.Deserialize<JwtTokenResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
         var userSession = await response.Content.ReadFromJsonAsync<JwtTokenResponse>();
         var customStateProvider = (CustomAuthenticationStateProvider)_authenticationStateProvider;
         await customStateProvider.UpdateAuthenticationState(userSession);
@@ -43,9 +52,9 @@ public class AuthService : IAuthService
         return loginResult;
     }
 
-    public void Logout()
+    public async Task Logout()
     {
-        _httpClient.DefaultRequestHeaders.Authorization = null;
+        await _sessionStorage.RemoveItemAsync("UserSession");
     }
 
     public Task<JwtTokenResponse> RefreshToken(string refreshToken)

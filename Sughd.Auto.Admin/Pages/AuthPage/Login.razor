@@ -1,5 +1,5 @@
 ﻿@page "/login"
-
+<MudText Typo="Typo.h6" Color="Color.Error" Align="Align.Center">@errorMessage</MudText>
 <MudContainer Class="mt-15">
     <MudGrid Justify="Justify.Center" AlignItems="AlignItems.Center">
         <MudItem xs="12" sm="7">
@@ -9,12 +9,15 @@
                                   Label="Email"
                                   Required="true"
                                   @bind-Value="email"
-                                  For="@(() => email)"/>
+                                  For="@(() => email)"
+                                  RequiredError="Email is required!"
+                                  Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
                     <MudTextField T="string"
                                   Label="Password"
                                   @bind-Value="password"
                                   For="@(() => password)"
-                                  Required="true"/>
+                                  Required="true"
+                                  RequiredError="Password is required!"/>
                 </MudForm>
             </MudPaper>
             <MudPaper Class="pa-4 mt-4">
@@ -40,6 +43,7 @@
     string[] errors = { };
     MudTextField<string> pwField1;
     MudForm form;
+    string errorMessage = "";
     string email = "";
     string password = "";
 
@@ -49,8 +53,15 @@
         await form.Validate();
         if (form.IsValid)
         {
-            await _authService.Login(email, password);
-            await form.ResetAsync();
+           var response = await _authService.Login(email, password);
+          
+           if (string.IsNullOrEmpty(response.AccessToken))
+           {
+               errorMessage = "Email or password is invalid!";
+               return;  
+           }
+            StateHasChanged();
+            Navigation.NavigateTo("/");
         }
     }
 

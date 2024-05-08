@@ -1,5 +1,5 @@
 ﻿@page "/register"
-
+<MudText Typo="Typo.h6" Color="Color.Error" Align="Align.Center">@errorMessage</MudText>
 <MudContainer Class="mt-15">
     <MudGrid Justify="Justify.Center" AlignItems="AlignItems.Center">
         <MudItem xs="12" sm="7">
@@ -65,6 +65,7 @@
 </MudContainer>
 
 @code {
+    private string errorMessage = "";
     bool success;
     string[] errors = { };
     MudTextField<string> pwField1;
@@ -98,6 +99,21 @@
 
     private async Task RegisterNewUser()
     {
+        try
+        {
+            var token = await _authenticationStateProvider.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                errorMessage = "You have not access to create new User!";
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            errorMessage = "You have not access to create new User!";
+            return;
+        }
+        
         await form.Validate();
         if (form.IsValid)
         {
