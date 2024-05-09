@@ -49,7 +49,7 @@
             <MudSelect @bind-Value="@context.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
                 @foreach (var markaResponsModel in _carMarkaResponsModels)
                 {
-                    <MudSelectItem size="@Size.Small" Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
+                    <MudSelectItem size="@Size.Small"  Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
                 }
             </MudSelect>
         </MudTd>
