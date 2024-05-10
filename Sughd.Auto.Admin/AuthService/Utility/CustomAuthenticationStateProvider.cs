@@ -66,7 +66,6 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
     public async Task<string> GetToken()
     {
-        Console.WriteLine("aa");
         var result = string.Empty;
         try
         {

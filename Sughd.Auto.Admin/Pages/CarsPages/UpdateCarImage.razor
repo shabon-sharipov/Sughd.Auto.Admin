@@ -1,0 +1,91 @@
+﻿@using System.Net.Http.Headers
+<MudDialog>
+    <DialogContent>
+        <MudForm>
+            @if (_imagesForShow != null)
+            {
+                <MudText Typo="@Typo.h6">@_imagesForShow.Count() File@(_imagesForShow.Count() == 1 ? "" : "s"):</MudText>
+                <MudList>
+                    @foreach (var file in _imagesForShow)
+                    {
+                        <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
+                            @file.Name <code>@file.Size bytes</code>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+            <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="UploadImage">
+                @* _images  *@
+                <ButtonTemplate>
+                    <MudButton Class="m-1" HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               for="@context.Id">
+                        Upload Image
+                    </MudButton>
+                    <MudButton Class="m-1" OnClick="DeleteImage"
+                               Variant="Variant.Filled"
+                               Color="Color.Error"
+                               StartIcon="@Icons.Material.Filled.Clear">
+                        Clear Images
+                    </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton OnClick="Save">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public long CarId { get; set; }
+
+    MultipartFormDataContent content = new MultipartFormDataContent();
+    IList<IBrowserFile> _imagesForShow = new List<IBrowserFile>();
+
+    private async Task UploadImage(InputFileChangeEventArgs files)
+    {
+        IReadOnlyList<IBrowserFile> _selectedFiles;
+        _selectedFiles = files.GetMultipleFiles();
+
+        if (_selectedFiles == null || !_selectedFiles.Any())
+        {
+            Console.WriteLine("No files selected");
+            return;
+        }
+
+        if (_selectedFiles.Count == 0) return;
+        foreach (var file in _selectedFiles)
+        {
+            var stream = file.OpenReadStream(file.Size);
+            var contentFile = new StreamContent(stream);
+            contentFile.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            content.Add(contentFile, "images", file.Name);
+            _imagesForShow.Add(file);
+        }
+    }
+
+    private void DeleteImage()
+    {
+        content = new MultipartFormDataContent();
+        _imagesForShow.Clear();
+    }
+
+    private async Task Save()
+    {
+        if (content == null)
+        {
+            return;
+        }
+
+        var response = await _carService.UploadImageFile(CarId, content, _authenticationStateProvider);
+        StateHasChanged();
+        Navigation.NavigateTo(PageBlazor.CARS);
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}
