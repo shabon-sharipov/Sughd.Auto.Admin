@@ -2,7 +2,10 @@
 @using System.Net.Http.Headers
 
 <MudText Typo="Typo.h6" Color="Color.Error" Align="Align.Center">@errorMessage</MudText>
-<MudButton Class="ml-3 mt-3" OnClick="@(() => NavigateToAddCarPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Info" Size="Size.Small"/>
+<MudCardActions Class="pa-4 mr-4 mt-4 ml-4">
+    <MudSwitch DisableElevation="true" @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
+    <MudButton JustifyContent="" DisableElevation="true" OnClick="@(() => NavigateToAddCarPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Info" Size="Size.Small"/>
+</MudCardActions>
 <MudTable Items="@_cars" Hover="true" 
           Class="m-4"
           ReadOnly="@ronly"
@@ -192,9 +195,6 @@
         <MudTablePager PageSizeOptions="new int[] { 5, 10, 25, 50, 100 }" />
     </PagerContent>
 </MudTable>
-<MudCard Class="m-4">
-    <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
-</MudCard>
 @code {
     private string errorMessage = "";
     private bool enabled = true;
