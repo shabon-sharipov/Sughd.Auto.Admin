@@ -6,9 +6,15 @@
                     IconColor="Color.Inherit"
                     Icon="@Icons.Material.Filled.SpaceDashboard"
                     Match="NavLinkMatch.All">
-            Dashboard
+            Home
         </MudNavLink>
         <AuthorizeView Roles="Admin, Moderator, Worker">
+            <MudNavLink Href="/dashboard"
+                        IconColor="Color.Inherit"
+                        Icon="@Icons.Material.Filled.SpaceDashboard"
+                        Match="NavLinkMatch.All">
+                Dashboard
+            </MudNavLink>
             <MudNavGroup Title="Registration cars"
                          Icon="@Icons.Material.Filled.DirectionsCarFilled"
                          Expanded="false">

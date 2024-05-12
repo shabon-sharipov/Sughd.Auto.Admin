@@ -1,0 +1,199 @@
+﻿@page "/dashboard"
+<MudText Typo="Typo.h6" Color="Color.Error" Align="Align.Center">@errorMessage</MudText>
+<MudGrid>
+    <MudItem xs="12" sm="3" Class="m-4">
+        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Cars!</MudText>
+        <MudPaper Width="500" Height="450px" Class="pa-4 mt-2 d-flex align-center justify-center mud-width-full py-8">
+            <MudChart ChartType="ChartType.Pie" InputData="@resultCar.TotalCarCount" @bind-SelectedIndex="Index" InputLabels="@labels"/>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="3" Class="m-4">
+        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">User!</MudText>
+        <MudPaper Width="500" Height="450px" Class="pa-4 mt-2 d-flex align-center justify-center mud-width-full py-8">
+            <MudChart ChartType="ChartType.Pie" InputData="@userResults" @bind-SelectedIndex="IndexUser" InputLabels="@labelsUser"/>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="3" Class="m-4">
+        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Check!</MudText>
+        <MudPaper Width="500" Height="450px" Class="pa-4 mt-2 d-flex align-center justify-center mud-width-full py-8">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudForm @ref="form">
+                        <MudTextField T="long"
+                                      Label="CarId"
+                                      Required="true"
+                                      @bind-Value="_calculateCheckRequestModel.CarId"
+                                      For="@(() => _calculateCheckRequestModel.CarId)"
+                                      RequiredError="CarId is required!"/>
+                        <MudTextField T="decimal"
+                                      Label="WeeklyDayPrice"
+                                      Required="true"
+                                      @bind-Value="_calculateCheckRequestModel.WeeklyDayPrice"
+                                      For="@(() => _calculateCheckRequestModel.WeeklyDayPrice)"
+                                      RequiredError="WeeklyDayPrice is required!"/>
+                        <MudTextField T="decimal"
+                                      Label="WeeklyEndPrice"
+                                      Required="true"
+                                      @bind-Value="_calculateCheckRequestModel.WeeklyEndPrice"
+                                      For="@(() => _calculateCheckRequestModel.WeeklyEndPrice)"
+                                      RequiredError="WeeklyEndPrice is required!"/>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   Class="ml-auto mt-4"
+                                   OnClick="async () => await Check()">
+                            Register
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Error"
+                                   Size="Size.Small"
+                                   Class="ml-auto mt-4"
+                                   DisableElevation="true"
+                                   OnClick="async () => await Reset()">
+                            Reset
+                        </MudButton>
+                    </MudForm>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudPaper Class="p-1">
+                        <MudText>WeeklyDayPrice: @_calculateCheckResponseModel.WeeklyDayPrice</MudText>
+                        <MudText>WeeklyDayCount: @_calculateCheckResponseModel.WeeklyDayCount</MudText>
+                        <MudText>WeeklyEndPrice: @_calculateCheckResponseModel.WeeklyEndPrice</MudText>
+                        <MudText>WeeklyEndCount: @_calculateCheckResponseModel.WeeklyEndCount</MudText>
+                        <MudText>UserPhoneNumber: @_calculateCheckResponseModel.UserPhoneNumber</MudText>
+                        <MudText>DateTime: @_calculateCheckResponseModel.DateTime</MudText>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" Class="m-4">
+        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Vehicles imported in the last 7 days!</MudText>
+        <div>
+            <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="IndexCarDiagram" Width="100%" Height="450px" XAxisLabels="@XAxisLabels" ChartOptions="@_options"/>
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudSlider @bind-Value="_options.YAxisTicks" Min="5" Max="10000" Step="5" Color="Color.Info">Y-Axis Ticks: @_options.YAxisTicks.ToString()</MudSlider>
+                </MudItem>
+            </MudGrid>
+        </div>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    private string errorMessage = "";
+
+    #region Car
+
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    int dataSize = 3;
+    static CarStatisticsResponseModel resultCar = new CarStatisticsResponseModel();
+    string[] labels = { "Active", "InActive", "Sold" };
+    double[] percentages = default;
+
+    #endregion
+
+    #region User
+
+    private int IndexUser = -1; //default value cannot be 0 -> first selectedindex is 0.
+    int dataSizeUser = 2;
+    double[] userResults;
+    string[] labelsUser = { "Worker", "Customer" };
+    double[] percentagesUser = default;
+
+    #endregion
+
+    #region CAR2
+
+    private int IndexCarDiagram = -1; //default value cannot be 0 -> first selectedindex is 0.
+    public readonly ChartOptions _options = new ChartOptions();
+
+    public List<ChartSeries> Series = new List<ChartSeries>();
+    public string[] XAxisLabels = { "1", "2", "3", "4", "5", "6", "7" };
+
+    #endregion
+
+    #region Check
+
+    CalculateCheckRequestModel _calculateCheckRequestModel = new CalculateCheckRequestModel();
+    CalculateCheckResponseModel _calculateCheckResponseModel = new CalculateCheckResponseModel();
+    MudForm form;
+
+    #endregion
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var token = await _authenticationStateProvider.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                errorMessage = "You have not access to use Marka page!";
+                return;
+            }
+        }
+        catch (Exception e)
+        {
+            errorMessage = "You have not access to use Marka page!";
+            return;
+        }
+        _options.YAxisTicks = 5;
+        resultCar = await _carService.GetStatistics(_authenticationStateProvider);
+        userResults = await _userService.GetStatistics(_authenticationStateProvider);
+
+    #region Car2
+
+        XAxisLabels = resultCar.ActiveCar.Select(s => $"{s.DaywhisMounth:dd.MM.yyyy} ({s.Count})").ToArray();
+        Series = new List<ChartSeries>()
+        {
+            new ChartSeries() { Name = "Active Car", Data = resultCar.ActiveCar.Select(s => s.Count).ToArray() }
+        };
+
+    #endregion
+
+    #region Car
+
+        double totalSum = resultCar.TotalCarCount.Sum();
+        percentages = resultCar.TotalCarCount.Select(value => Math.Round((value / (double)totalSum) * 100, 2)).ToArray();
+        labels = new[] { $"Active Car: {resultCar.TotalCarCount[0]} ({percentages[0]}%)", $"InActive Car: {resultCar.TotalCarCount[1]} ({percentages[1]}%)", $"Sold Cars: {resultCar.TotalCarCount[2]} ({percentages[2]}%)" };
+
+    #endregion
+
+    #region User
+
+        double totalSumUser = userResults.Sum();
+        percentagesUser = userResults.Select(value => Math.Round((value / (double)totalSumUser) * 100, 2)).ToArray();
+        labelsUser = new[] { $"Worker: {userResults[0]} ({percentagesUser[0]}%)", $"Customer: {userResults[1]} ({percentagesUser[1]}%)" };
+
+    #endregion
+
+    #region Check
+
+        _calculateCheckRequestModel.WeeklyDayPrice = 5;
+        _calculateCheckRequestModel.WeeklyEndPrice = 10;
+
+    #endregion
+
+        StateHasChanged();
+    }
+
+    private async Task Check()
+    {
+        await form.Validate();
+        if (form.IsValid && _calculateCheckRequestModel.CarId != 0)
+        {
+            var response = await _carService.CalculateCheck(_calculateCheckRequestModel, _authenticationStateProvider);
+            _calculateCheckResponseModel = response;
+            StateHasChanged();
+        }
+    }
+
+    private async Task Reset()
+    {
+        _calculateCheckResponseModel = new CalculateCheckResponseModel();
+        _calculateCheckRequestModel = new CalculateCheckRequestModel();
+        StateHasChanged();
+    }
+
+}

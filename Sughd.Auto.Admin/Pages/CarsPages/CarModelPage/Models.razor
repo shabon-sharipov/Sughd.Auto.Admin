@@ -25,25 +25,22 @@
             <MudTableSortLabel SortBy="new Func<CarModelResponseModel, object>(x => x.Id)">Id</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarModelResponseModel, object>(x => x.Name)">Модел</MudTableSortLabel>
+            <MudTableSortLabel SortBy="new Func<CarModelResponseModel, object>(x => x.MarkaName)">Марка</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarModelResponseModel, object>(x => x.MarkaName)">Марка</MudTableSortLabel>
+            <MudTableSortLabel SortBy="new Func<CarModelResponseModel, object>(x => x.Name)">Модел</MudTableSortLabel>
         </MudTh>
     </HeaderContent>
 
     <RowTemplate>
         <MudTd DataLabel="Id">@context.Id</MudTd>
-        <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="MarkaName">@context.MarkaName</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
     </RowTemplate>
 
     <RowEditingTemplate>
         <MudTd DataLabel="Id">
             <MudTextFiel/>
-        </MudTd>
-        <MudTd DataLabel="Name">
-            <MudTextField @bind-Value="@context.Name"/>
         </MudTd>
         <MudTd DataLabel="MarkaName">
             <MudSelect @bind-Value="@context.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
@@ -52,6 +49,9 @@
                     <MudSelectItem size="@Size.Small"  Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
                 }
             </MudSelect>
+        </MudTd>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="@context.Name"/>
         </MudTd>
     </RowEditingTemplate>
 

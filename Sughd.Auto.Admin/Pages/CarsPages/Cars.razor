@@ -6,13 +6,13 @@
     <MudSwitch DisableElevation="true" @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
     <MudButton JustifyContent="" DisableElevation="true" OnClick="@(() => NavigateToAddCarPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Info" Size="Size.Small"/>
 </MudCardActions>
-<MudTable Items="@_cars" Hover="true" 
+<MudTable Items="@_cars" Hover="true"
           Class="m-4"
           ReadOnly="@ronly"
-          SortLabel="Sort By" 
+          SortLabel="Sort By"
           Loading="@_loading"
           Filter="new Func<CarResponseModels, bool>(SearchByName)"
-          CanCancelEdit="@canCancelEdit" 
+          CanCancelEdit="@canCancelEdit"
           @bind-SelectedItem="selectedCar"
           CommitEditTooltip="Commit Edit"
           RowEditPreview="BackupItem"
@@ -25,88 +25,57 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Id)">Id</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.CarNumber)">CarNumber</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel Enabled="@enabled" SortBy="new Func<CarResponseModels, object>(x => x.Marka.Name)">Marka</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<CarResponseModels, object>(x => x.Model.Name)">Model</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.VINCode)">VINCode</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.DateOfPablisher)">DateOfPablisher</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Price)">Price</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.EngineCapacity)">EngineCapacity</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Mileage)">Mileage</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.IsRastamogeno)">IsRastamogeno</MudTableSortLabel>
-        </MudTh>
-        <MudTh>
             <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.IsActive)">IsActive</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.FuelType)">FuelType</MudTableSortLabel>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Id)">Id</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Transmission)">Transmission</MudTableSortLabel>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.MarkaName)">MarkaName</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.CarBody)">CarBody</MudTableSortLabel>
+            <MudTableSortLabel Enabled="@enabled" SortBy="new Func<CarResponseModels, object>(x => x.ModelName)">ModelName</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.UserName)">UserName</MudTableSortLabel>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.DateOfPublisher)">DateOfPublisher</MudTableSortLabel>
         </MudTh>
         <MudTh>
-            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Color)">Color</MudTableSortLabel>
+            <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.UserPhoneNumber)">UserPhoneNumber</MudTableSortLabel>
         </MudTh>
         <MudTh>
             <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Images)">Images</MudTableSortLabel>
         </MudTh>
+        <MudTh>
+            <MudText>Delete</MudText>
+        </MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd DataLabel="IsActive" >
+            <MudSwitch @bind-Value="@context.IsActive" @oninput="@(e => UpdateStatusCar(context.Id, context.IsActive == false ? true : false))" Color="Color.Info" T="bool"/>
+        </MudTd>
         <MudTd DataLabel="Id">@context.Id</MudTd>
-        <MudTd DataLabel="CarNumber">@context.CarNumber</MudTd>
-        <MudTd DataLabel="Marka">@context.Marka.Name</MudTd>
-        <MudTd DataLabel="Model">@context.Model.Name</MudTd>
-        <MudTd DataLabel="VINCode">@context.VINCode</MudTd>
-        <MudTd DataLabel="DateOfPablisher">@context.DateOfPablisher</MudTd>
-        <MudTd DataLabel="Price">@context.Price</MudTd>
-        <MudTd DataLabel="EngineCapacity">@context.EngineCapacity</MudTd>
-        <MudTd DataLabel="Mileage">@context.Mileage</MudTd>
-        <MudTd DataLabel="IsRastamogeno">@context.IsRastamogeno</MudTd>
-        <MudTd DataLabel="IsActive">@context.IsActive</MudTd>
-        <MudTd DataLabel="FuelType">@context.FuelType</MudTd>
-        <MudTd DataLabel="Transmission">@context.Transmission</MudTd>
-        <MudTd DataLabel="CarBody">@context.CarBody</MudTd>
-        <MudTd DataLabel="UserName">@context.UserName</MudTd>
-        <MudTd DataLabel="Color">@context.Color</MudTd>
+        <MudTd DataLabel="MarkaName">@context.MarkaName</MudTd>
+        <MudTd DataLabel="ModelName">@context.ModelName</MudTd>
+        <MudTd DataLabel="DateOfPublisher">@context.DateOfPublisher</MudTd>
+        <MudTd DataLabel="UserPhoneNumber">@context.UserPhoneNumber</MudTd>
         <MudTd DataLabel="Images">
             <MudButton OnClick="@(() => OpenDialog(context.Images))" Variant="Variant.Filled" Color="Color.Primary">
                 Images
             </MudButton>
         </MudTd>
+        <MudTd DataLabel="Images">
+            <MudButton OnClick="@(() => Delete(context.Id))" Variant="Variant.Filled" Color="Color.Primary">
+                Delete
+            </MudButton>
+        </MudTd>
     </RowTemplate>
     <RowEditingTemplate>
+        <MudTd DataLabel="IsActive">
+            <MudTextFiel/>
+        </MudTd>
         <MudTd DataLabel="Id">
             <MudTextFiel/>
         </MudTd>
-        <MudTd DataLabel="CarNumber">
-            <MudTextField @bind-Value="@context.CarNumber"/>
-        </MudTd>
-            
         <MudTd DataLabel="Marka">
             <MudSelect @bind-Value="@context.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
                        onchange="@(GetModelByMarkaId(context.MarkaId))">
@@ -124,62 +93,12 @@
                 }
             </MudSelect>
         </MudTd>
-            
-        <MudTd DataLabel="VINCode">
-            <MudTextField @bind-Value="@context.VINCode"/>
+
+        <MudTd DataLabel="DateOfPublisher">
+            <MudTextField @bind-Value="@context.DateOfPublisher"/>
         </MudTd>
-        <MudTd DataLabel="DateOfPablisher">
-            <MudTextField @bind-Value="@context.DateOfPablisher"/>
-        </MudTd>
-        <MudTd DataLabel="Price">
-            <MudNumericField @bind-Value="@context.Price" Required/>
-        </MudTd>
-        <MudTd DataLabel="EngineCapacity">
-            <MudTextField @bind-Value="@context.EngineCapacity"/>
-        </MudTd>
-        <MudTd DataLabel="Mileage">
-            <MudTextField @bind-Value="@context.Mileage"/>
-        </MudTd>
-        <MudTd DataLabel="IsRastamogeno">
-            <MudSwitch @bind-Value="@context.IsRastamogeno" Color="Color.Info" T="bool"/>
-        </MudTd>
-        <MudTd DataLabel="IsActive">
-            <MudSwitch @bind-Value="@context.IsActive" Color="Color.Info" T="bool"/>
-        </MudTd>
-        <MudTd DataLabel="FuelType">
-            <MudSelect @bind-Value="@context.FuelType" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                @foreach (var fuelType in _fuelTypes)
-                {
-                    <MudSelectItem size="@Size.Medium" Value="@fuelType">@fuelType</MudSelectItem>
-                }
-            </MudSelect>
-        </MudTd>
-        <MudTd DataLabel="Transmission">
-            <MudSelect  @bind-Value="@context.Transmission" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                @foreach (var transmission in _transmissions)
-                {
-                    <MudSelectItem size="@Size.Medium" Value="@transmission">@transmission</MudSelectItem>
-                }
-            </MudSelect>
-        </MudTd>
-        <MudTd DataLabel="CarBody">
-            <MudSelect  @bind-Value="@context.CarBody" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                @foreach (var carBody in _carBodies)
-                {
-                    <MudSelectItem  size="@Size.Medium" Value="@carBody">@carBody</MudSelectItem>
-                }
-            </MudSelect>
-        </MudTd>
-        <MudTd DataLabel="UserName">
-            <MudTextFiel/>
-        </MudTd>
-        <MudTd DataLabel="Color">
-            <MudSelect @bind-Value="@context.Color" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                @foreach (var color in _colors)
-                {
-                    <MudSelectItem size="@Size.Medium" Value="@color">@color</MudSelectItem>
-                }
-            </MudSelect>
+        <MudTd DataLabel="UserPhoneNumber">
+            <MudTextField @bind-Value="@context.UserPhoneNumber"/>
         </MudTd>
         <MudTd DataLabel="Images">
             <MudButton Class="m-1" HtmlTag="label"
@@ -190,11 +109,15 @@
                 Upload Image
             </MudButton>
         </MudTd>
+        <MudTd DataLabel="Delete">
+            <MudTextFiel/>
+        </MudTd>
     </RowEditingTemplate>
     <PagerContent>
-        <MudTablePager PageSizeOptions="new int[] { 5, 10, 25, 50, 100 }" />
+        <MudTablePager PageSizeOptions="new int[] { 5, 10, 25, 50, 100 }"/>
     </PagerContent>
 </MudTable>
+
 @code {
     private string errorMessage = "";
     private bool enabled = true;
@@ -203,20 +126,16 @@
     private bool showIsActiveCar = true;
     private bool _loading = true;
     private bool canCancelEdit = true;
-    private List<string> _carBodies = new();
-    private List<string> _fuelTypes = new();
-    private List<string> _transmissions = new();
-    private List<string> _colors = new();
-    List<string> ? _imageUrlsForSetToCar = new();
+   private bool isActiveCar = false;
+    private long carIdForUpdateStatus = default;
     private CarResponseModels selectedCar = null;
     private CarResponseModels carBeforeEdit = null;
-    private List<CarResponseModels> ? _cars = new();
-    private List<CarMarkaResponsModel> ? _carMarkaResponsModels = new();
-    private List<CarModelResponseModel> ? _carModelResponseModels = new();
+    private List<CarResponseModels>? _cars = new();
+    private List<CarMarkaResponsModel>? _carMarkaResponsModels = new();
+    private List<CarModelResponseModel>? _carModelResponseModels = new();
 
     protected override async Task OnInitializedAsync()
     {
-
         try
         {
             var token = await _authenticationStateProvider.GetToken();
@@ -233,10 +152,9 @@
             _loading = false;
             return;
         }
-        
+
         _cars = await _carService.Get(100, 0);
         await GetCarMarka();
-        await GetCarDetails();
         _loading = false;
     }
 
@@ -245,33 +163,29 @@
         if (string.IsNullOrWhiteSpace(searchTerm))
             return true;
 
-        if (carResponseModels.CarNumber.Contains(searchTerm))
-        return true;
-        
-            if (carResponseModels.UserName.Contains(searchTerm))
-                return true;
-            if (carResponseModels.Model.Name.Contains(searchTerm))
-                return true;
-            if (carResponseModels.Marka.Name.Contains(searchTerm))
-                return true;
+        if (carResponseModels.MarkaName.Contains(searchTerm))
+            return true;
+
+        if (carResponseModels.ModelName.Contains(searchTerm))
+            return true;
+        if (carResponseModels.UserPhoneNumber.Contains(searchTerm))
+            return true;
 
         return false;
     }
 
-    private async Task GetCarDetails()
+    private async Task UpdateStatusCar(long Id, bool isActive)
     {
-        _fuelTypes = CarDetailsHelper.FuelType();
-        _transmissions = CarDetailsHelper.Transmission();
-        _carBodies = CarDetailsHelper.CarBody();
-        _colors = CarDetailsHelper.Color();
+       await _carService.UpdateStatus(Id, isActive, _authenticationStateProvider);
+        NavigationManager.Refresh();
     }
 
     private void NavigateToAddCarPage()
     {
         Navigation.NavigateTo(PageBlazor.ADD_CAR);
     }
- 
-    #region Shoe image in ShowImageDialog
+
+    #region Show image in ShowImageDialog
 
     private void OpenDialog(List<string> images)
     {
@@ -283,6 +197,12 @@
 
     #endregion
 
+    private async Task Delete(long id)
+    {
+        await _carService.DeleteCar(id, _authenticationStateProvider);
+        _cars.RemoveAll(c => c.Id == id);
+    }
+    
     #region Update Image
 
     private async Task UploadImage()
@@ -296,53 +216,32 @@
     }
 
     #endregion
-    
+
     #region Edit Table
 
     private void BackupItem(object element)
     {
         carBeforeEdit = new()
         {
-           CarNumber = ((CarResponseModels)element).CarNumber,
-           MarkaId = ((CarResponseModels)element).MarkaId,
-           ModelId = ((CarResponseModels)element).ModelId,
-           VINCode = ((CarResponseModels)element).VINCode,
-           DateOfPablisher = ((CarResponseModels)element).DateOfPablisher,
-           Price = ((CarResponseModels)element).Price,
-           EngineCapacity = ((CarResponseModels)element).EngineCapacity,
-           Mileage = ((CarResponseModels)element).Mileage,
-           IsRastamogeno = ((CarResponseModels)element).IsRastamogeno,
-           IsActive = ((CarResponseModels)element).IsActive,
-           Images = ((CarResponseModels)element).Images,
-           FuelType = ((CarResponseModels)element).FuelType,
-           Transmission = ((CarResponseModels)element).Transmission,
-           CarBody = ((CarResponseModels)element).CarBody,
-           UserId = ((CarResponseModels)element).UserId,
-           Color = ((CarResponseModels)element).Color,
-           UserName =  ((CarResponseModels)element).UserName,
-           Marka =  ((CarResponseModels)element).Marka,
-           Model =  ((CarResponseModels)element).Model
+            MarkaId = ((CarResponseModels)element).MarkaId,
+            ModelId = ((CarResponseModels)element).ModelId,
+            MarkaName = ((CarResponseModels)element).MarkaName,
+            ModelName = ((CarResponseModels)element).ModelName,
+            UserPhoneNumber = ((CarResponseModels)element).UserPhoneNumber,
+            DateOfPublisher = ((CarResponseModels)element).DateOfPublisher,
+            Images = ((CarResponseModels)element).Images          
         };
     }
 
     private void ResetItemToOriginalValues(object element)
     {
-        ((CarResponseModels)element).CarNumber = carBeforeEdit.CarNumber;
         ((CarResponseModels)element).MarkaId = carBeforeEdit.MarkaId;
         ((CarResponseModels)element).ModelId = carBeforeEdit.ModelId;
-        ((CarResponseModels)element).VINCode = carBeforeEdit.VINCode;
-        ((CarResponseModels)element).DateOfPablisher = carBeforeEdit.DateOfPablisher;
-        ((CarResponseModels)element).Price = carBeforeEdit.Price;
-        ((CarResponseModels)element).EngineCapacity = carBeforeEdit.EngineCapacity;
-        ((CarResponseModels)element).Mileage = carBeforeEdit.Mileage;
-        ((CarResponseModels)element).IsRastamogeno = carBeforeEdit.IsRastamogeno;
-        ((CarResponseModels)element).IsActive = carBeforeEdit.IsActive;
+        ((CarResponseModels)element).ModelName = carBeforeEdit.ModelName;
+        ((CarResponseModels)element).MarkaName = carBeforeEdit.MarkaName;
+        ((CarResponseModels)element).UserPhoneNumber = carBeforeEdit.UserPhoneNumber;
+        ((CarResponseModels)element).DateOfPublisher = carBeforeEdit.DateOfPublisher;
         ((CarResponseModels)element).Images = carBeforeEdit.Images;
-        ((CarResponseModels)element).FuelType = carBeforeEdit.FuelType;
-        ((CarResponseModels)element).Transmission = carBeforeEdit.Transmission;
-        ((CarResponseModels)element).CarBody = carBeforeEdit.CarBody;
-        ((CarResponseModels)element).UserId = carBeforeEdit.UserId;
-        ((CarResponseModels)element).Color = carBeforeEdit.Color;
     }
 
     private void ItemHasBeenCommitted(object element)
@@ -351,27 +250,16 @@
 
         var carRequest = new CarRequestModel()
         {
-            CarNumber = ((CarResponseModels)element).CarNumber,
             MarkaId = ((CarResponseModels)element).MarkaId,
             ModelId = ((CarResponseModels)element).ModelId,
-            VINCode = ((CarResponseModels)element).VINCode,
-            DateOfPablisher = ((CarResponseModels)element).DateOfPablisher,
-            Price = ((CarResponseModels)element).Price,
-            EngineCapacity = ((CarResponseModels)element).EngineCapacity,
-            Mileage = ((CarResponseModels)element).Mileage,
-            IsRastamogeno = ((CarResponseModels)element).IsRastamogeno,
-            IsActive = ((CarResponseModels)element).IsActive,
-            Images = _imageUrlsForSetToCar,
-            FuelType = ((CarResponseModels)element).FuelType,
-            Transmission = ((CarResponseModels)element).Transmission,
-            CarBody = ((CarResponseModels)element).CarBody,
-            UserId = ((CarResponseModels)element).UserId,
-            Color = ((CarResponseModels)element).Color
+            UserPhoneNumber = ((CarResponseModels)element).UserPhoneNumber,
+            DateOfPublisher = ((CarResponseModels)element).DateOfPublisher,
+            Images = ((CarResponseModels)element).Images
         };
 
         _carService.Update(carResponseModels.Id, carRequest, _authenticationStateProvider);
     }
-    
+
     #endregion
 
     #region Car car details
@@ -380,7 +268,7 @@
     {
         _carMarkaResponsModels = await _carDetailsService.GetCarMarka();
     }
-    
+
     private async Task GetModelByMarkaId(long markaId)
     {
         if (markaId != 0)
@@ -390,4 +278,5 @@
     }
 
     #endregion
+
 }

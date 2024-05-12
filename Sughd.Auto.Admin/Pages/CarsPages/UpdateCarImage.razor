@@ -32,6 +32,7 @@
                     </MudButton>
                 </ButtonTemplate>
             </MudFileUpload>
+            <MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true"/>
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -43,12 +44,13 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter] public long CarId { get; set; }
-
+    private bool isVisible;
     MultipartFormDataContent content = new MultipartFormDataContent();
     IList<IBrowserFile> _imagesForShow = new List<IBrowserFile>();
 
     private async Task UploadImage(InputFileChangeEventArgs files)
     {
+        isVisible = true;
         IReadOnlyList<IBrowserFile> _selectedFiles;
         _selectedFiles = files.GetMultipleFiles();
 
@@ -67,6 +69,9 @@
             content.Add(contentFile, "images", file.Name);
             _imagesForShow.Add(file);
         }
+        
+        isVisible = false;
+        StateHasChanged();
     }
 
     private void DeleteImage()
@@ -77,12 +82,14 @@
 
     private async Task Save()
     {
+        isVisible = true;
         if (content == null)
         {
             return;
         }
 
         var response = await _carService.UploadImageFile(CarId, content, _authenticationStateProvider);
+        isVisible = false;
         StateHasChanged();
         Navigation.NavigateTo(PageBlazor.CARS);
     }

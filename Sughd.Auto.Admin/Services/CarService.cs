@@ -11,8 +11,14 @@ public interface ICarService
 {
     Task<HttpStatusCode> Post(CarRequestModel carRequestModel, CustomAuthenticationStateProvider authenticationStateProvider);
     Task<List<CarResponseModels> ?> Get(int pageSize, int offSet);
+    Task UpdatePaymentAt(long carId, CustomAuthenticationStateProvider authenticationStateProvider);
+    Task<CalculateCheckResponseModel> CalculateCheck(CalculateCheckRequestModel calculateCheckResponseModel, CustomAuthenticationStateProvider authenticationStateProvider);
     Task Update(long carId, CarRequestModel carRequestModel, CustomAuthenticationStateProvider authenticationStateProvider);
     Task<int> UploadImageFile(long id, MultipartFormDataContent content, CustomAuthenticationStateProvider authenticationStateProvider);
+
+    Task UpdateStatus(long carId, bool isActive, CustomAuthenticationStateProvider authenticationStateProvider);
+    Task DeleteCar(long carId, CustomAuthenticationStateProvider authenticationStateProvider);
+    Task<CarStatisticsResponseModel> GetStatistics(CustomAuthenticationStateProvider authenticationStateProvider);
 }
 
 public class CarService : ICarService
@@ -37,10 +43,48 @@ public class CarService : ICarService
             $"Car/GetAll?pageSize={pageSize}&offSet={offSet}");
     }
 
-    public async Task Update(long carId, CarRequestModel carRequestModel, CustomAuthenticationStateProvider authenticationStateProvider)
+    public async Task UpdatePaymentAt(long carId, CustomAuthenticationStateProvider authenticationStateProvider)
+    {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
+        await _httpClient.PutAsJsonAsync($"Car/UpdatePaymentAt?carId={carId}", carId);
+    }
+
+    public async Task<CalculateCheckResponseModel> CalculateCheck(CalculateCheckRequestModel calculateCheckResponseModel,
+        CustomAuthenticationStateProvider authenticationStateProvider)
+    {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
+        var response = await _httpClient.GetFromJsonAsync<CalculateCheckResponseModel>(
+                           $"Car/CalculateCheck?CarId={calculateCheckResponseModel.CarId}&WeeklyDayPrice={calculateCheckResponseModel.WeeklyDayPrice}&WeeklyEndPrice={calculateCheckResponseModel.WeeklyDayPrice}") ??
+                       default;
+        return response;
+    }
+
+    public async Task Update(long carId, CarRequestModel carRequestModel,
+        CustomAuthenticationStateProvider authenticationStateProvider)
     {
         SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
         await _httpClient.PutAsJsonAsync($"Car?id={carId}", carRequestModel);
+    }
+
+    public async Task DeleteCar(long carId, CustomAuthenticationStateProvider authenticationStateProvider)
+    {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
+        await _httpClient.DeleteAsync($"Car?id={carId}");
+    }
+
+    public async Task<CarStatisticsResponseModel> GetStatistics(CustomAuthenticationStateProvider authenticationStateProvider)
+    {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
+        var response = await _httpClient.GetFromJsonAsync<CarStatisticsResponseModel>("Car/GetStatistics") ?? default;
+        return response;
+    }
+
+    public async Task UpdateStatus(long carId, bool isActive,
+        CustomAuthenticationStateProvider authenticationStateProvider)
+    {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
+        var response = await _httpClient.PutAsJsonAsync($"Car/UpdateStatus?id={carId}&isActive={isActive}", isActive);
+        // return await response.Content.ReadFromJsonAsync<string>();
     }
     
     public async Task<int> UploadImageFile(long id, MultipartFormDataContent content, CustomAuthenticationStateProvider authenticationStateProvider)

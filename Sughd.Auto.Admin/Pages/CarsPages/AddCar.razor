@@ -8,63 +8,6 @@
             <MudPaper Class="pa-4">
                 <MudText Align="Align.Center" Class="mb-n4">Car Registration</MudText>
                 <MudForm @ref="@form">
-                    <MudTextField @bind-Value="_car.CarNumber"
-                                  For="@(() => _car.CarNumber)"
-                                  Immediate="true"
-                                  Label="Номер автомобил"
-                                  Id=""/>
-                    <MudTextField @bind-Value="_car.DateOfPablisher"
-                                  For="@(() => _car.DateOfPablisher)"
-                                  Immediate="true"
-                                  Label="Год выпуска"
-                                  Id=""/>
-                    <MudTextField @bind-Value="_car.Price"
-                                  For="@(() => _car.Price)"
-                                  Immediate="true"
-                                  Label="Цена"
-                                  Id=""/>
-                    <MudTextField @bind-Value="_car.EngineCapacity"
-                                  For="@(() => _car.EngineCapacity)"
-                                  Immediate="true"
-                                  Label="Оъем двигателя"
-                                  Id=""/>
-                    <MudTextField @bind-Value="_car.Mileage"
-                                  For="@(() => _car.Mileage)"
-                                  Immediate="true"
-                                  Label="Пробег"
-                                  Id=""/>
-
-                    <MudSwitch @bind-Value="_car.IsActive" Color="Color.Info" T="bool" Label="Active"/>
-                    <MudSwitch @bind-Value="_car.IsRastamogeno" Color="Color.Info" T="bool" Label="Растаможен в РТ"/>
-
-                    <MudSelect Label="Тип топлива" @bind-Value="_car.FuelType" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                        @foreach (var fuelType in _fuelTypes)
-                        {
-                            <MudSelectItem Value="@fuelType">@fuelType</MudSelectItem>
-                        }
-                    </MudSelect>
-
-                    <MudSelect Label="Коробка Передача" @bind-Value="_car.Transmission" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                        @foreach (var transmission in _transmissions)
-                        {
-                            <MudSelectItem Value="@transmission">@transmission</MudSelectItem>
-                        }
-                    </MudSelect>
-
-                    <MudSelect Label="Кузов" @bind-Value="_car.CarBody" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                        @foreach (var carBody in _carBodies)
-                        {
-                            <MudSelectItem Value="@carBody">@carBody</MudSelectItem>
-                        }
-                    </MudSelect>
-
-                    <MudSelect Label="Цвет" @bind-Value="_car.Color" AnchorOrigin="Origin.BottomCenter" T="string" Id="">
-                        @foreach (var color in _colors)
-                        {
-                            <MudSelectItem Value="@color">@color</MudSelectItem>
-                        }
-                    </MudSelect>
-
                     <MudSelect Label="Mark" @bind-Value="_car.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
                                onchange="@(GetModelByMarkaId(_car.MarkaId))">
                         @foreach (var markaResponsModel in _carMarkaResponsModels)
@@ -79,8 +22,18 @@
                             <MudSelectItem Value="@modelResponseModel.Id">@modelResponseModel.Name</MudSelectItem>
                         }
                     </MudSelect>
-
-                    <MudAutocomplete T="string" Label="User phone number" @bind-Value="_phoneNumber" SearchFunc="@SearchUser" Required="true"/>
+                    
+                    <MudTextField @bind-Value="_car.DateOfPublisher"
+                                  For="@(() => _car.DateOfPublisher)"
+                                  Immediate="true"
+                                  Label="Год выпуска"
+                                  Id=""/>
+                    
+                    <MudTextField @bind-Value="_car.UserPhoneNumber"
+                                  For="@(() => _car.UserPhoneNumber)"
+                                  Immediate="true"
+                                  Label="UserPhoneNumber"
+                                  Id=""/>
 
                     @* _images  *@
                     @if (_imagesForShow != null)
@@ -125,6 +78,7 @@
                         OnClick="@(async () => await SaveCar())">
                         Save
                     </MudButton>
+                    <MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true"/>
                 </MudCardActions>
             </MudPaper>
         </MudItem>
@@ -134,14 +88,10 @@
 @code{
 
     [Required(AllowEmptyStrings = false, ErrorMessage = "Please provide phone number")]
-    public string _phoneNumber;
-
+ 
+    private bool isVisible;
     private CarRequestModel _car = new();
     MudForm form;
-    private List<string> _carBodies = new();
-    private List<string> _fuelTypes = new();
-    private List<string> _transmissions = new();
-    private List<string> _colors = new();
     private List<CarMarkaResponsModel> ? _carMarkaResponsModels = new();
     private List<CarModelResponseModel> ? _carModelResponseModels = new();
     private List<UserInfoForSaleCarResponseModel> _userInfoForSaleCarResponseModels = new();
@@ -150,16 +100,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await GetCarDetails();
         await GetCarMarka();
     }
 
     private async Task SaveCar()
     {
+        isVisible = true;
         await form.Validate();
         if (form.IsValid)
         {
-            _car.UserId = _userInfoForSaleCarResponseModels.FirstOrDefault(u => u.PhoneNumber == _phoneNumber)!.Id;
             _car.Images = _imageUrlsForSetToCar;
             var result = await _carService.Post(_car, _authenticationStateProvider);
             if (result == HttpStatusCode.OK)
@@ -167,14 +116,9 @@
                 Navigation.NavigateTo(PageBlazor.CARS);
             }
         }
-    }
 
-    private async Task GetCarDetails()
-    {
-        _fuelTypes = CarDetailsHelper.FuelType();
-        _transmissions = CarDetailsHelper.Transmission();
-        _carBodies = CarDetailsHelper.CarBody();
-        _colors = CarDetailsHelper.Color();
+        isVisible = false;
+        StateHasChanged();
     }
 
     private async Task GetCarMarka()
@@ -189,21 +133,10 @@
             _carModelResponseModels = await _carDetailsService.GetCarModelByMarkaId(markaId);
         }
     }
-
-    private async Task<IEnumerable<string>> SearchUser(string phoneNumber)
-    {
-        if (string.IsNullOrEmpty(phoneNumber))
-        {
-            return new List<string>();
-        }
-
-        var userInfoForSaleCarResponseModels = await _searchService.SearchByUserName(phoneNumber);
-        _userInfoForSaleCarResponseModels = userInfoForSaleCarResponseModels.ToList();
-        return userInfoForSaleCarResponseModels.Select(s => s.PhoneNumber);
-    }
-
+    
     private async Task UploadImage(InputFileChangeEventArgs files)
     {
+        isVisible = true;
         IReadOnlyList<IBrowserFile> _selectedFiles;
         _selectedFiles = files.GetMultipleFiles();
 
@@ -227,6 +160,8 @@
         }
 
         _imageUrlsForSetToCar = await _UploadImageService.UploadImageFile(content);
+        isVisible = false;
+        StateHasChanged();
     }
 
     private void DeleteImage()
