@@ -8,6 +8,7 @@ namespace Sughd.Auto.Admin.AuthService;
 
 public interface IUserService
 {
+    Task<double[]> GetStatistics(CustomAuthenticationStateProvider authenticationStateProvider);
     Task<List<UserResponseModel> ?> Get(int pageSize, int offSet, CustomAuthenticationStateProvider authenticationStateProvider);
     Task Update(long carId, UserUpdateRequestModel register, CustomAuthenticationStateProvider authenticationStateProvider);
 }
@@ -19,6 +20,13 @@ public class UserService : IUserService
     public UserService(HttpClient httpClient)
     {
         _httpClient = httpClient;
+    }
+
+    public async Task<double[]> GetStatistics(CustomAuthenticationStateProvider authenticationStateProvider)
+    {
+        SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
+        var response = await _httpClient.GetFromJsonAsync<double[]>("User/GetStatistics") ?? default;
+        return response;
     }
 
     public async Task<List<UserResponseModel> ?> Get(int pageSize, int offSet, CustomAuthenticationStateProvider authenticationStateProvider)
