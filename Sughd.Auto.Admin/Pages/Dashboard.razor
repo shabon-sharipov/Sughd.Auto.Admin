@@ -129,13 +129,13 @@
             var token = await _authenticationStateProvider.GetToken();
             if (string.IsNullOrEmpty(token))
             {
-                errorMessage = "You have not access to use Marka page!";
+                errorMessage = "You have not access to use dashboard page!";
                 return;
             }
         }
         catch (Exception e)
         {
-            errorMessage = "You have not access to use Marka page!";
+            errorMessage = "You have not access to use dashboard page!";
             return;
         }
         _options.YAxisTicks = 5;

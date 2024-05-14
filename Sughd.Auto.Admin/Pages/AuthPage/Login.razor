@@ -17,6 +17,7 @@
                                   @bind-Value="password"
                                   For="@(() => password)"
                                   Required="true"
+                                  InputType="InputType.Password"
                                   RequiredError="Password is required!"/>
                 </MudForm>
             </MudPaper>
@@ -61,7 +62,7 @@
                return;  
            }
             StateHasChanged();
-            Navigation.NavigateTo("/");
+            Navigation.NavigateTo("/dashboard");
         }
     }
 

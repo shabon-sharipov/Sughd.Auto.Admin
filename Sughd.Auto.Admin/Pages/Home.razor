@@ -4,9 +4,41 @@
 
 <div class="row">
     <div class="col-12">
-        <h2 class="fw-bolder text-center m-4">Welcome to <span class="text-black">Sughd Auto Dashboard</span></h2>
+        <h2 class="fw-bolder text-center m-4">Welcome to Sughd Auto Dashboard</h2>
     </div>
-    <div class="col-12">
-        
-    </div>
+    <MudCarousel Class="mud-width-full" Style="height:800px;" ShowArrows="@arrows" ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
+        <MudCarouselItem>
+            <div class="d-flex justify-content-center align-items-center" style="height:100%">
+                <MudImage Src="images/3.jpg" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem>
+            <div class="d-flex justify-content-center align-items-center" style="height:100%">
+                <MudImage Src="images/2.jpg" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem>
+            <div class="d-flex justify-content-center align-items-center" style="height:100%">
+                <MudImage Src="images/1.jpg" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem>
+            <div class="d-flex justify-content-center align-items-center" style="height:100%">
+                <MudImage Src="images/4.jpg" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem>
+            <div class="d-flex justify-content-center align-items-center" style="height:100%">
+                <MudImage Src="images/5.jpg" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
+            </div>
+        </MudCarouselItem>
+    </MudCarousel>
 </div>
+
+@code{ 
+    private bool arrows = true;
+    private bool bullets = true;
+    private bool enableSwipeGesture = true;
+    private bool autocycle = true;
+    private Transition transition = Transition.Slide;
+}
