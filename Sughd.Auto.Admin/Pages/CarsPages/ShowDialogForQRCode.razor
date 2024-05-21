@@ -1,0 +1,112 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudItem xs="12" Class="p-3 m-2">
+            @if (!string.IsNullOrEmpty(qrCodeUrl))
+            {
+                <div class="qr-code-container">
+                    <h4>Generated QR Code:</h4>
+                    <img id="qrCodeImage" width="450" height="450" class="qr-code-image" src="@qrCodeUrl" alt="QR Code" onclick="printQRCode('@MarkaName', 
+                           '@ModelName', '@DateOfPublisher', '@UserPhoneNumber', '@DateTime.Now' )"/>
+                </div>
+            }
+        </MudItem>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+    <DialogActions>
+            <MudButton OnClick="Ok">Ok</MudButton>
+        </DialogActions>
+</MudDialog>
+
+@code {
+    private string qrCodeUrl = "";
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public string MarkaName { get; set; }
+    [Parameter] public string ModelName { get; set; }
+    [Parameter] public string UserPhoneNumber { get; set; }
+    [Parameter] public string DateOfPublisher { get; set; }
+    [Parameter] public long CarId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string baseUrl = NavigationManager.BaseUri; // Get the base URL of the application
+        string messageUrl = $"{baseUrl}message/{Uri.EscapeDataString(CarId.ToString())}"; // Encode the car ID into the URL
+        JsonConvert.SerializeObject(messageUrl);
+        string apiUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={Uri.EscapeDataString(messageUrl)}";
+        qrCodeUrl = apiUrl;
+    }
+    
+    void Cancel() => MudDialog.Cancel();
+
+    void Ok()
+    {
+        Navigation.NavigateTo(PageBlazor.CARS);
+    }
+}
+
+<script>
+    function printQRCode(markaName, modelName, DateOfPublisher, UserPhoneNumber, DateTime) {
+        const qrCodeImage = document.getElementById('qrCodeImage').src;
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Print QR Code</title>
+                    <style>
+                        body {
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                        }
+                        div {
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                        }
+                        img {
+                            max-width: 100%;
+                            max-height: 100%;
+                        }
+                    </style>
+                </head>
+                <body>
+                        <span style="margin-top: 20px">
+                            <p><strong>User Phone Number:</strong> ${UserPhoneNumber}</p>
+                            <p><strong>Marka:</strong> ${markaName} ${modelName}</p>
+                            <p><strong>DateOfPublisher:</strong> ${DateOfPublisher}</p>
+                            <p><strong>Date Time:</strong> ${DateTime}</p>
+                        </span>
+                        <div style="margin-top: 150px">                        
+                            <img id="printImage" width="350px" height="350px" src="${qrCodeImage}" alt="QR Code"/>
+                        </div>
+                </body>
+            </html>
+        `);
+        
+        // Ensure the image is fully loaded before printing
+        printWindow.document.close();
+        printWindow.onload = function() {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        };
+    }
+</script>
+<style>
+    .qr-code-container {
+        text-align: center; /* Center the content */
+        margin: 20px 0; /* Add some margin for spacing */
+    }
+    
+    .qr-code-image {
+        width: 100%;
+        max-width: 500px; /* Set a maximum width */
+        height: auto; /* Maintain aspect ratio */
+        border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better aesthetics */
+        cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+    }
+</style>
