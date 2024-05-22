@@ -5,7 +5,7 @@ public class CarResponseModels
     public long Id { get; set; }
 
     public string DateOfPublisher { get; set; } = string.Empty;
-    
+    public string QRCode { get; set; }
     public bool IsActive { get; set; }
 
     public List<string> Images { get; set; }

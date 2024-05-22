@@ -57,7 +57,7 @@ public class CarService : ICarService
     {
         //SetToke.SetTokeToHeaderRequest(_httpClient, await authenticationStateProvider.GetToken());
         var response = await _httpClient.GetFromJsonAsync<CalculateCheckResponseModel>(
-                           $"Car/CalculateCheck?CarId={calculateCheckResponseModel.CarId}&WeeklyDayPrice={calculateCheckResponseModel.WeeklyDayPrice}&WeeklyEndPrice={calculateCheckResponseModel.WeeklyDayPrice}") ??
+                           $"Car/CalculateCheck?CarId={calculateCheckResponseModel.CarId}&WeeklyDayPrice={calculateCheckResponseModel.WeeklyDayPrice}&WeeklyEndPrice={calculateCheckResponseModel.WeeklyEndPrice}") ??
                        default;
         return response;
     }

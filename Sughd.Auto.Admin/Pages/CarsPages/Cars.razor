@@ -46,6 +46,9 @@
             <MudTableSortLabel SortBy="new Func<CarResponseModels, object>(x => x.Images)">Images</MudTableSortLabel>
         </MudTh>
         <MudTh>
+            <MudText>QRCode</MudText>
+        </MudTh>
+        <MudTh>
             <MudText>Delete</MudText>
         </MudTh>
     </HeaderContent>
@@ -63,8 +66,13 @@
                 Images
             </MudButton>
         </MudTd>
-        <MudTd DataLabel="Images">
-            <MudButton OnClick="@(() => Delete(context.Id))" Variant="Variant.Filled" Color="Color.Primary">
+        <MudTd DataLabel="QRCode">
+            <MudButton OnClick="@(() => OpenQRCodeDiaog(context))" Variant="Variant.Filled" Color="Color.Primary">
+                QRCode
+            </MudButton>
+        </MudTd>
+        <MudTd DataLabel="Delete">
+            <MudButton OnClick="@(() => Delete(context.Id))" Variant="Variant.Filled" Color="Color.Error">
                 Delete
             </MudButton>
         </MudTd>
@@ -108,6 +116,9 @@
                        StartIcon="@Icons.Material.Filled.CloudUpload">
                 Upload Image
             </MudButton>
+        </MudTd>
+        <MudTd DataLabel="QRCode">
+            <MudTextFiel/>
         </MudTd>
         <MudTd DataLabel="Delete">
             <MudTextFiel/>
@@ -201,6 +212,16 @@
     {
         await _carService.DeleteCar(id, _authenticationStateProvider);
         _cars.RemoveAll(c => c.Id == id);
+    }
+
+    private async Task OpenQRCodeDiaog(CarResponseModels context)
+    {
+        var parameters = new DialogParameters<ShowDialogForQRCode>();
+        parameters.Add(x => x.MarkaName, context.MarkaName);
+        parameters.Add(x => x.ModelName, context.ModelName);
+        parameters.Add(x => x.CarResponseModels, context);
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        DialogService.Show<ShowDialogForQRCode>("QRCode", parameters, options);
     }
     
     #region Update Image

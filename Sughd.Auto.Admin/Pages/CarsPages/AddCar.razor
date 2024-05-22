@@ -188,9 +188,7 @@
             var parameters = new DialogParameters<ShowDialogForQRCode>();
             parameters.Add(x => x.MarkaName, markaName);
             parameters.Add(x => x.ModelName, modelName);
-            parameters.Add(x => x.DateOfPublisher, model.DateOfPublisher);
-            parameters.Add(x => x.UserPhoneNumber, model.UserPhoneNumber);
-            parameters.Add(x => x.CarId, model.Id);
+            parameters.Add(x => x.CarResponseModels, model);
             var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
             DialogService.Show<ShowDialogForQRCode>("QRCode", parameters, options);          
         }

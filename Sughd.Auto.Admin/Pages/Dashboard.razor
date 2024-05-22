@@ -175,7 +175,7 @@
     private async Task Check()
     {
         await form.Validate();
-        if (form.IsValid && _calculateCheckRequestModel.CarId != 0)
+        if (form.IsValid && _calculateCheckRequestModel.CarId != null)
         {
             var response = await _carService.CalculateCheck(_calculateCheckRequestModel, _authenticationStateProvider);
             _calculateCheckResponseModel = response;

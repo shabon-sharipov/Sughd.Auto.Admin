@@ -10,7 +10,7 @@
             <strong>User Phone Number:</strong> @car.UserPhoneNumber
         </p>
         <p><strong>Weekly Day Count:</strong> @car.WeeklyDayCount x 5 = <strong>Weekly Day Price:</strong> @car.WeeklyDayPrice </p>
-        <p><strong>Weekly End Count:</strong> @car.WeeklyEndCount x 15 = <strong>Weekly End Price:</strong> @car.WeeklyEndPrice </p>
+        <p><strong>Weekly End Count:</strong> @car.WeeklyEndCount x 10 = <strong>Weekly End Price:</strong> @car.WeeklyEndPrice </p>
         <p>
             <strong>Date Time:</strong> @car.DateTime
         </p>
@@ -33,19 +33,16 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (long.TryParse(CarId, out long carId))
+        var requestModel = new CalculateCheckRequestModel()
         {
-            var requestModel = new CalculateCheckRequestModel()
-            {
-                CarId = carId,
-                WeeklyDayPrice = 5,
-                WeeklyEndPrice = 10
-            };
+            CarId = Guid.Parse(CarId),
+            WeeklyDayPrice = 5,
+            WeeklyEndPrice = 10
+        };
 
-            car = await _carService.CalculateCheck(requestModel, _authenticationStateProvider);
+        car = await _carService.CalculateCheck(requestModel, _authenticationStateProvider);
 
-            totalPrice = car.WeeklyDayPrice + car.WeeklyEndPrice;
-        }
+        totalPrice = car.WeeklyDayPrice + car.WeeklyEndPrice;
     }
 
 }

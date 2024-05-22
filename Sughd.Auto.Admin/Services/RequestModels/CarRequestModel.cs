@@ -8,7 +8,6 @@ public class CarRequestModel
     public string UserPhoneNumber { get; set; }
 
     public long MarkaId { get; set; }
-
     public long ModelId { get; set; }
 
     [Required(AllowEmptyStrings = false, ErrorMessage = "Please provide DateOfPublisher")]

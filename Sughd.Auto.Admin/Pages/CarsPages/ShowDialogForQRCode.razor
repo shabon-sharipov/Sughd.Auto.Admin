@@ -6,7 +6,7 @@
                 <div class="qr-code-container">
                     <h4>Generated QR Code:</h4>
                     <img id="qrCodeImage" width="450" height="450" class="qr-code-image" src="@qrCodeUrl" alt="QR Code" onclick="printQRCode('@MarkaName', 
-                           '@ModelName', '@DateOfPublisher', '@UserPhoneNumber', '@DateTime.Now' )"/>
+                           '@ModelName', '@CarResponseModels.DateOfPublisher', '@CarResponseModels.UserPhoneNumber', '@DateTime.Now' )"/>
                 </div>
             }
         </MudItem>
@@ -24,17 +24,11 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter] public string MarkaName { get; set; }
     [Parameter] public string ModelName { get; set; }
-    [Parameter] public string UserPhoneNumber { get; set; }
-    [Parameter] public string DateOfPublisher { get; set; }
-    [Parameter] public long CarId { get; set; }
-
+    [Parameter] public CarResponseModels CarResponseModels { get; set; }
+   
     protected override async Task OnInitializedAsync()
     {
-        string baseUrl = NavigationManager.BaseUri; // Get the base URL of the application
-        string messageUrl = $"{baseUrl}message/{Uri.EscapeDataString(CarId.ToString())}"; // Encode the car ID into the URL
-        JsonConvert.SerializeObject(messageUrl);
-        string apiUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={Uri.EscapeDataString(messageUrl)}";
-        qrCodeUrl = apiUrl;
+        qrCodeUrl = CarResponseModels.QRCode;
     }
     
     void Cancel() => MudDialog.Cancel();
