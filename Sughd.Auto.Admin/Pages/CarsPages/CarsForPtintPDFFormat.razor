@@ -1,9 +1,8 @@
 ﻿@page  "/CarsForPtintPDFFormat"
-@using Microsoft.JSInterop
 @inject IJSRuntime JS
 
 <MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true"/>
-<MudGrid Class="m-4" Justify="Justify.Center">
+<MudGrid Class="mt-4" Justify="Justify.Center">
     <MudItem xs="12" sm="6" md="3">
         <MudPaper>
             <MudSelect Class="p-2 w-100" Label="Марка" @bind-Value="markaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
