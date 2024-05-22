@@ -2,7 +2,7 @@
 <MudText Typo="Typo.h6" Color="Color.Error" Align="Align.Center">@errorMessage</MudText>
 <MudGrid>
     <MudItem xs="12" Class="m-4">
-        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Cars!</MudText>
+        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Легковые автомобили!</MudText>
         <MudPaper Width="500"  Class="pa-4 mt-2 d-flex align-center justify-center mud-width-full py-8">
             <MudChart ChartType="ChartType.Pie" InputData="@resultCar.TotalCarCount" @bind-SelectedIndex="Index" InputLabels="@labels"/>
         </MudPaper>
@@ -123,13 +123,13 @@
             var token = await _authenticationStateProvider.GetToken();
             if (string.IsNullOrEmpty(token))
             {
-                errorMessage = "You have not access to use dashboard page!";
+                Navigation.NavigateTo(PageBlazor.LOGIN);
                 return;
             }
         }
         catch (Exception e)
         {
-            errorMessage = "You have not access to use dashboard page!";
+            Navigation.NavigateTo(PageBlazor.LOGIN);
             return;
         }
         _options.YAxisTicks = 5;

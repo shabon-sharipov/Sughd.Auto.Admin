@@ -1,6 +1,5 @@
 ﻿@page "/AddCar"
 @using System.Net.Http.Headers
-@using Sughd.Auto.Admin.Pages.CarsPages.MarkaPage
 
 <MudButton OnClick="@(() => NavigateToCarsPage())" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Color="Color.Info" Size="Size.Small"></MudButton>
 <MudContainer Class="mt-15">
@@ -9,7 +8,7 @@
             <MudPaper Class="pa-4">
                 <MudText Align="Align.Center" Class="mb-n4">Car Registration</MudText>
                 <MudForm @ref="@form">
-                    <MudSelect Label="Mark" @bind-Value="_car.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
+                    <MudSelect Label="Марка" @bind-Value="_car.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
                                onchange="@(GetModelByMarkaId(_car.MarkaId))">
                         @foreach (var markaResponsModel in _carMarkaResponsModels)
                         {
@@ -33,7 +32,7 @@
                     <MudTextField @bind-Value="_car.UserPhoneNumber"
                                   For="@(() => _car.UserPhoneNumber)"
                                   Immediate="true"
-                                  Label="UserPhoneNumber"
+                                  Label="Номер телефона"
                                   Id=""/>
 
                     @* _images  *@
@@ -58,13 +57,13 @@
                                        Color="Color.Primary"
                                        StartIcon="@Icons.Material.Filled.CloudUpload"
                                        for="@context.Id">
-                                Upload Image
+                                Загрузить изображение
                             </MudButton>
                             <MudButton Class="m-1" OnClick="DeleteImage"
                                        Variant="Variant.Filled"
                                        Color="Color.Error"
                                        StartIcon="@Icons.Material.Filled.Clear">
-                                Clear Images
+                                Очистить изображения
                             </MudButton>
                         </ButtonTemplate>
                     </MudFileUpload>
@@ -77,7 +76,7 @@
                         Color="Color.Tertiary"
                         Size="Size.Medium"
                         OnClick="@(async () => await SaveCar())">
-                        Save
+                        Сохранять
                     </MudButton>
                     <MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true"/>
                 </MudCardActions>

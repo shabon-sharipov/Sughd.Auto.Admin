@@ -9,6 +9,7 @@ namespace Sughd.Auto.Admin.Services;
 
 public interface ICarService
 {
+    Task<List<CarResponseModels> ?> Search(SearchCarRequestModel carRequestModel);
     Task<CarResponseModels ?> Post(CarRequestModel carRequestModel, CustomAuthenticationStateProvider authenticationStateProvider);
     Task<List<CarResponseModels> ?> Get(int pageSize, int offSet);
     Task UpdatePaymentAt(long carId, CustomAuthenticationStateProvider authenticationStateProvider);
@@ -28,6 +29,16 @@ public class CarService : ICarService
     public CarService(HttpClient httpClient)
     {
         _httpClient = httpClient;
+    }
+
+    public async Task<List<CarResponseModels> ?> Search(SearchCarRequestModel carRequestModel)
+    {
+        var response = await _httpClient.PostAsJsonAsync("Search", carRequestModel);
+
+        var loginResult = JsonSerializer.Deserialize<List<CarResponseModels>>(await response.Content.ReadAsStringAsync(),
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        return loginResult;
     }
 
     public async Task<CarResponseModels ?> Post(CarRequestModel carRequestModel, CustomAuthenticationStateProvider authenticationStateProvider)

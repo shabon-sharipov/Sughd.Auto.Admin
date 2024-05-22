@@ -13,14 +13,14 @@
                         IconColor="Color.Inherit"
                         Icon="@Icons.Material.Filled.SpaceDashboard"
                         Match="NavLinkMatch.All">
-                Dashboard
+                Панель приборов
             </MudNavLink>
             <MudNavGroup Title="Registration cars"
                          Icon="@Icons.Material.Filled.DirectionsCarFilled"
                          Expanded="false">
-                <MudNavLink Href="@PageBlazor.CARS">Cars</MudNavLink>
-                <MudNavLink Href="@PageBlazor.MARKA">Marka</MudNavLink>
-                <MudNavLink Href="/Model">Model</MudNavLink>
+                <MudNavLink Href="@PageBlazor.CARS">Легковые автомобили</MudNavLink>
+                <MudNavLink Href="@PageBlazor.MARKA">Марка</MudNavLink>
+                <MudNavLink Href="/Model">Модел</MudNavLink>
             </MudNavGroup>
         </AuthorizeView>
         <AuthorizeView Roles="Admin, Moderator">
@@ -28,10 +28,10 @@
                         IconColor="Color.Inherit"
                         Icon="@Icons.Material.Filled.People"
                         Match="NavLinkMatch.All">
-                Users
+                Пользователи
             </MudNavLink>
             <MudNavGroup Icon="@Icons.Material.Rounded.VerifiedUser"
-                         Title="Authentication"
+                         Title="Аутентификация"
                          HideExpandIcon="true">
                 <MudStack Spacing="2"
                           Class="my-2">
@@ -39,17 +39,17 @@
                                 IconColor="Color.Inherit"
                                 Icon="@Icons.Material.Rounded.HowToReg"
                                 Match="NavLinkMatch.All">
-                        Register
+                        Регистр
                     </MudNavLink>
                 </MudStack>
             </MudNavGroup>
+            <MudNavLink Href="/CarsForPtintPDFFormat"
+                        IconColor="Color.Inherit"
+                        Icon="@Icons.Material.Filled.PictureAsPdf"
+                        Match="NavLinkMatch.All">
+                PDF
+            </MudNavLink>
         </AuthorizeView>
-        <MudNavLink Href="/profile"
-                    IconColor="Color.Inherit"
-                    Icon="@Icons.Material.Rounded.Person"
-                    Match="NavLinkMatch.All">
-            Profile
-        </MudNavLink>
     </MudStack>
 </MudNavMenu>
 

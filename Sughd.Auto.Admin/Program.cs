@@ -23,5 +23,5 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStat
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredSessionStorage();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://sughdauto-001-site2.ltempurl.com/") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7178/") });
 await builder.Build().RunAsync();
