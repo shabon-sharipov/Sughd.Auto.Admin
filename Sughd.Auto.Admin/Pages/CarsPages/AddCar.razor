@@ -114,6 +114,7 @@
             if (result != null)
             {
                 await GenerateQRCode(result);
+                await form.ResetAsync();
             }
         }
 
