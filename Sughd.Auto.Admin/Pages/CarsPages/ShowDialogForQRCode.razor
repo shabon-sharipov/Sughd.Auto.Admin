@@ -55,25 +55,31 @@
                             height: 100vh;
                             margin: 0;
                         }
-                        div {
+                         .image-container {
                           display: flex;
                           justify-content: center;
-                          align-items: center;
+                          align-items: center;                         
                         }
                         img {
                             max-width: 100%;
                             max-height: 100%;
                         }
+                     .centered-content {
+                    text-align: left;
+                    }
                     </style>
                 </head>
                 <body>
-                        <span style="margin-top: 20px">
-                            <p><strong>User Phone Number:</strong> ${UserPhoneNumber}</p>
-                            <p><strong>Marka:</strong> ${markaName} ${modelName}</p>
-                            <p><strong>DateOfPublisher:</strong> ${DateOfPublisher}</p>
-                            <p><strong>Date Time:</strong> ${DateTime}</p>
+                    <div class="centered-content">
+                        <span>
+                            <p style="font-size: 20px;"><strong>Номер телефона пользователя:</strong> ${UserPhoneNumber}</p>
+                            <p style="font-size: 20px;"><strong>Марка:</strong> ${markaName} ${modelName}</p>
+                            <p style="font-size: 20px;"><strong>Год выпуска:</strong> ${DateOfPublisher}</p>
+                            <p style="font-size: 20px;"><strong>Date Time:</strong> ${DateTime}</p>
                         </span>
-                        <div style="margin-top: 150px">                        
+                    </div>
+                    </div>
+                        <div class="image-container" style="margin-top: 150px">                        
                             <img id="printImage" width="350px" height="350px" src="${qrCodeImage}" alt="QR Code"/>
                         </div>
                 </body>

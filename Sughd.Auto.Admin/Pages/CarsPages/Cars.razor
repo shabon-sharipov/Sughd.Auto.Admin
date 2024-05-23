@@ -174,10 +174,10 @@
         if (string.IsNullOrWhiteSpace(searchTerm))
             return true;
 
-        if (carResponseModels.MarkaName.Contains(searchTerm))
+        if (carResponseModels.MarkaName.ToLower().Contains(searchTerm.ToLower()))
             return true;
 
-        if (carResponseModels.ModelName.Contains(searchTerm))
+        if (carResponseModels.ModelName.ToLower().Contains(searchTerm.ToLower()))
             return true;
         if (carResponseModels.UserPhoneNumber.Contains(searchTerm))
             return true;
@@ -287,7 +287,10 @@
 
     private async Task GetCarMarka()
     {
-        _carMarkaResponsModels = await _carDetailsService.GetCarMarka();
+        if (_carMarkaResponsModels == null || _carMarkaResponsModels.Count == 0)
+        {
+            _carMarkaResponsModels = await _carDetailsService.GetCarMarka();
+        }
     }
 
     private async Task GetModelByMarkaId(long markaId)

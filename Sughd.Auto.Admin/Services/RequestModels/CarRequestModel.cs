@@ -13,5 +13,6 @@ public class CarRequestModel
     [Required(AllowEmptyStrings = false, ErrorMessage = "Please provide DateOfPublisher")]
     public string DateOfPublisher { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = "Images are required")]
     public List<string> Images { get; set; } = new();
 }
