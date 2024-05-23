@@ -1,0 +1,173 @@
+﻿@page  "/CarsForPtintPDFFormat"
+@inject IJSRuntime JS
+
+<MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true"/>
+<MudGrid Class="mt-4" Justify="Justify.Center">
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper>
+            <MudSelect Class="p-2 w-100" Label="Марка" @bind-Value="markaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
+                       onchange="@(GetModelByMarkaId(markaId))">
+                @foreach (var markaResponsModel in _carMarkaResponsModels)
+                {
+                    <MudSelectItem Value="@markaResponsModel.Id">@markaResponsModel.Name</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect Class="p-2 w-100" Label="Модел" @bind-Value="modelId" AnchorOrigin="Origin.BottomCenter" T="long" Id="">
+                @foreach (var modelResponseModel in _carModelResponseModels)
+                {
+                    <MudSelectItem Value="@modelResponseModel.Id">@modelResponseModel.Name</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect Class="p-2 w-100" Label="Год от" AnchorOrigin="Origin.BottomCenter" IconSize="Size.Small" T="long" Id="">
+            </MudSelect>
+            <MudSelect Class="p-2 w-100" Label="Год до" AnchorOrigin="Origin.BottomCenter" IconSize="Size.Small" T="long" Id="">
+            </MudSelect>
+            <MudButton
+                Class="m-1"
+                Variant="Variant.Filled"
+                StartIcon="@Icons.Material.Filled.Search"
+                Color="Color.Tertiary"
+                Size="Size.Medium"
+                OnClick="@(async () => await Search())">
+                Search
+            </MudButton>
+            <MudButton
+                Class="m-1"
+                Variant="Variant.Filled"
+                StartIcon="@Icons.Material.Filled.Download"
+                Color="Color.Primary"
+                Size="Size.Medium"
+                OnClick="@(async () => await SaveAsPdf())">
+                Save as PDF
+            </MudButton>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="12" md="6">
+        <MudTable Items="@_car" Hover="true" Class="m-4">
+            <HeaderContent>
+                <MudTh>Id</MudTh>
+                <MudTh>Марка</MudTh>
+                <MudTh>Модел</MudTh>
+                <MudTh>Год</MudTh>
+                <MudTh>UserPhoneNumber</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Id">@context.Id</MudTd>
+                <MudTd DataLabel="Марка">@context.MarkaName</MudTd>
+                <MudTd DataLabel="Модел">@context.ModelName</MudTd>
+                <MudTd DataLabel="Год">@context.DateOfPublisher</MudTd>
+                <MudTd DataLabel="UserPhoneNumber">@context.UserPhoneNumber</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private bool isVisible;
+    SearchCarRequestModel _searchCarRequestModel = new();
+    protected long markaId = 0;
+    protected long modelId = 0;
+    private List<CarMarkaResponsModel> ? _carMarkaResponsModels = new();
+    private List<CarModelResponseModel> ? _carModelResponseModels = new();
+    private List<CarResponseModels> ? _car = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var token = await _authenticationStateProvider.GetToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                Navigation.NavigateTo(PageBlazor.LOGIN);
+            }
+        }
+        catch (Exception e)
+        {
+            Navigation.NavigateTo(PageBlazor.LOGIN);
+        }
+        
+        await GetCarMarka();
+    }
+
+    private async Task GetModelByMarkaId(long markaId)
+    {
+        if (markaId != 0)
+        {
+            var response = await _carDetailsService.GetCarModelByMarkaId(markaId);
+            var model = new CarModelResponseModel()
+            {
+                Name = "None"
+            };
+
+            response?.Insert(0, model);
+
+            _carModelResponseModels = response;
+        }
+    }
+    private async Task SaveAsPdf()
+    {
+        if (_car == null || _car.Count == 0)
+        {
+            return;
+        }
+        var pdfList = _car.Select((c, index) => new PDF
+        {
+            Number = index + 1,
+            Id = c.Id,
+            DateOfPublisher = c.DateOfPublisher,
+            MarkaName = c.MarkaName,
+            ModelName = c.ModelName,
+            UserPhoneNumber = c.UserPhoneNumber
+        }).ToList();
+        
+        var serializedData = JsonConvert.SerializeObject(pdfList);
+        await JS.InvokeVoidAsync("generatePDF", serializedData);
+    }
+    
+    private async Task GetCarMarka()
+    {
+        var response = await _carDetailsService.GetCarMarka();
+        var model = new CarMarkaResponsModel()
+        {
+            Name = "None"
+        };
+
+        response?.Insert(0, model);
+        _carMarkaResponsModels = response;
+    }
+
+    private async Task Search()
+    {
+        isVisible = true;
+        if (markaId == 0)
+        {
+            _searchCarRequestModel.MarkaId = null;
+        }
+        else
+        {
+            _searchCarRequestModel.MarkaId = markaId;
+        }
+
+        if (modelId == 0)
+        {
+            _searchCarRequestModel.ModelId = null;
+        }
+        else
+        {
+            _searchCarRequestModel.ModelId = modelId;
+        }
+
+        _car = await _carService.Search(_searchCarRequestModel);
+        isVisible = false;
+    }
+    
+public class PDF
+{
+    public int Number { get; set; }
+    public long Id { get; set; }
+    public string MarkaName { get; set; }
+    public string ModelName { get; set; }
+    public string DateOfPublisher { get; set; }
+    public string UserPhoneNumber { get; set; }
+}
+}

@@ -8,11 +8,11 @@ public class CarRequestModel
     public string UserPhoneNumber { get; set; }
 
     public long MarkaId { get; set; }
-
     public long ModelId { get; set; }
 
     [Required(AllowEmptyStrings = false, ErrorMessage = "Please provide DateOfPublisher")]
     public string DateOfPublisher { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = "Images are required")]
     public List<string> Images { get; set; } = new();
 }

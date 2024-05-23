@@ -20,6 +20,31 @@ a, .btn-link {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+.qr-code-container {
+    text-align: center; /* Center the content */
+    margin: 20px 0; /* Add some margin for spacing */
+}
+
+.qr-code-image {
+    width: 100%;
+    max-width: 500px; /* Set a maximum width */
+    height: auto; /* Maintain aspect ratio */
+    border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better aesthetics */
+    cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .qr-code-container h4 {
+        font-size: 1.2em; /* Adjust the font size for smaller screens */
+    }
+
+    .qr-code-image {
+        max-width: 90%; /* Reduce max-width on smaller screens */
+    }
+}
+
 .content {
     padding-top: 1.1rem;
 }

@@ -13,7 +13,7 @@ public interface ICarDetailsService
     Task<List<CarMarkaResponsModel> ?> GetCarMarka();
     Task UpdateCarMarka(long markaId, CarMarkaRequest carMarkaRequest, CustomAuthenticationStateProvider authenticationStateProvider);
     Task<HttpStatusCode> AddCarMarka(CarMarkaRequest carMarkaRequest, CustomAuthenticationStateProvider authenticationStateProvider);
-    Task<List<CarModelResponseModel> ?> GetCarModelByMarkaId(long markaId);
+    Task<List<CarModelResponseModel> ?> GetCarModelByMarkaId(long? markaId);
     Task<List<CarModelResponseModel> ?> GetCarModel();
     Task<HttpStatusCode> AddCarModel(CarModelRequest carModelRequest, CustomAuthenticationStateProvider authenticationStateProvider);
     Task UpdateCarModel(long modelId, CarModelRequest carModelRequest, CustomAuthenticationStateProvider authenticationStateProvider);
@@ -49,7 +49,7 @@ public class CarDetailsService : ICarDetailsService
         var responseMessage =  await _httpClient.PostAsJsonAsync("Marka", carMarkaRequest);
         return responseMessage.StatusCode;
     }
-    public async Task<List<CarModelResponseModel> ?> GetCarModelByMarkaId(long markaId)
+    public async Task<List<CarModelResponseModel> ?> GetCarModelByMarkaId(long? markaId)
     {
         var models =
             await _httpClient.GetFromJsonAsync<List<CarModelResponseModel>>($"Model/GetByMarkaId?markaId={markaId}");

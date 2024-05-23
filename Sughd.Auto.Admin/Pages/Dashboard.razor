@@ -1,83 +1,77 @@
 ﻿@page "/dashboard"
 <MudText Typo="Typo.h6" Color="Color.Error" Align="Align.Center">@errorMessage</MudText>
 <MudGrid>
-    <MudItem xs="12" sm="3" Class="m-4">
-        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Cars!</MudText>
-        <MudPaper Width="500" Height="450px" Class="pa-4 mt-2 d-flex align-center justify-center mud-width-full py-8">
+    <MudItem xs="12" Class="m-4">
+        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Легковые автомобили!</MudText>
+        <MudPaper Width="500"  Class="pa-4 mt-2 d-flex align-center justify-center mud-width-full py-8">
             <MudChart ChartType="ChartType.Pie" InputData="@resultCar.TotalCarCount" @bind-SelectedIndex="Index" InputLabels="@labels"/>
         </MudPaper>
     </MudItem>
-    <MudItem xs="12" sm="3" Class="m-4">
-        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">User!</MudText>
-        <MudPaper Width="500" Height="450px" Class="pa-4 mt-2 d-flex align-center justify-center mud-width-full py-8">
-            <MudChart ChartType="ChartType.Pie" InputData="@userResults" @bind-SelectedIndex="IndexUser" InputLabels="@labelsUser"/>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="12" sm="3" Class="m-4">
-        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Check!</MudText>
-        <MudPaper Width="500" Height="450px" Class="pa-4 mt-2 d-flex align-center justify-center mud-width-full py-8">
-            <MudGrid>
-                <MudItem xs="12">
-                    <MudForm @ref="form">
-                        <MudTextField T="long"
-                                      Label="CarId"
-                                      Required="true"
-                                      @bind-Value="_calculateCheckRequestModel.CarId"
-                                      For="@(() => _calculateCheckRequestModel.CarId)"
-                                      RequiredError="CarId is required!"/>
-                        <MudTextField T="decimal"
-                                      Label="WeeklyDayPrice"
-                                      Required="true"
-                                      @bind-Value="_calculateCheckRequestModel.WeeklyDayPrice"
-                                      For="@(() => _calculateCheckRequestModel.WeeklyDayPrice)"
-                                      RequiredError="WeeklyDayPrice is required!"/>
-                        <MudTextField T="decimal"
-                                      Label="WeeklyEndPrice"
-                                      Required="true"
-                                      @bind-Value="_calculateCheckRequestModel.WeeklyEndPrice"
-                                      For="@(() => _calculateCheckRequestModel.WeeklyEndPrice)"
-                                      RequiredError="WeeklyEndPrice is required!"/>
-                        <MudButton Variant="Variant.Filled"
-                                   Color="Color.Primary"
-                                   Size="Size.Small"
-                                   Class="ml-auto mt-4"
-                                   OnClick="async () => await Check()">
-                            Register
-                        </MudButton>
-                        <MudButton Variant="Variant.Filled"
-                                   Color="Color.Error"
-                                   Size="Size.Small"
-                                   Class="ml-auto mt-4"
-                                   DisableElevation="true"
-                                   OnClick="async () => await Reset()">
-                            Reset
-                        </MudButton>
-                    </MudForm>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudPaper Class="p-1">
-                        <MudText>WeeklyDayPrice: @_calculateCheckResponseModel.WeeklyDayPrice</MudText>
-                        <MudText>WeeklyDayCount: @_calculateCheckResponseModel.WeeklyDayCount</MudText>
-                        <MudText>WeeklyEndPrice: @_calculateCheckResponseModel.WeeklyEndPrice</MudText>
-                        <MudText>WeeklyEndCount: @_calculateCheckResponseModel.WeeklyEndCount</MudText>
-                        <MudText>UserPhoneNumber: @_calculateCheckResponseModel.UserPhoneNumber</MudText>
-                        <MudText>DateTime: @_calculateCheckResponseModel.DateTime</MudText>
-                    </MudPaper>
-                </MudItem>
-            </MudGrid>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="12" Class="m-4">
-        <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Vehicles imported in the last 7 days!</MudText>
-        <div>
-            <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="IndexCarDiagram" Width="100%" Height="450px" XAxisLabels="@XAxisLabels" ChartOptions="@_options"/>
-            <MudGrid>
-                <MudItem xs="6">
-                    <MudSlider @bind-Value="_options.YAxisTicks" Min="5" Max="10000" Step="5" Color="Color.Info">Y-Axis Ticks: @_options.YAxisTicks.ToString()</MudSlider>
-                </MudItem>
-            </MudGrid>
-        </div>
-    </MudItem>
+    @* <MudItem xs="12" sm="3" Class="m-4"> *@
+    @*     <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Check!</MudText> *@
+    @*     <MudPaper Width="500" Height="450px" Class="pa-4 mt-2 d-flex align-center justify-center mud-width-full py-8"> *@
+    @*         <MudGrid> *@
+    @*             <MudItem xs="12"> *@
+    @*                 <MudForm @ref="form"> *@
+    @*                     <MudTextField T="long" *@
+    @*                                   Label="CarId" *@
+    @*                                   Required="true" *@
+    @*                                   @bind-Value="_calculateCheckRequestModel.CarId" *@
+    @*                                   For="@(() => _calculateCheckRequestModel.CarId)" *@
+    @*                                   RequiredError="CarId is required!"/> *@
+    @*                     <MudTextField T="decimal" *@
+    @*                                   Label="WeeklyDayPrice" *@
+    @*                                   Required="true" *@
+    @*                                   @bind-Value="_calculateCheckRequestModel.WeeklyDayPrice" *@
+    @*                                   For="@(() => _calculateCheckRequestModel.WeeklyDayPrice)" *@
+    @*                                   RequiredError="WeeklyDayPrice is required!"/> *@
+    @*                     <MudTextField T="decimal" *@
+    @*                                   Label="WeeklyEndPrice" *@
+    @*                                   Required="true" *@
+    @*                                   @bind-Value="_calculateCheckRequestModel.WeeklyEndPrice" *@
+    @*                                   For="@(() => _calculateCheckRequestModel.WeeklyEndPrice)" *@
+    @*                                   RequiredError="WeeklyEndPrice is required!"/> *@
+    @*                     <MudButton Variant="Variant.Filled" *@
+    @*                                Color="Color.Primary" *@
+    @*                                Size="Size.Small" *@
+    @*                                Class="ml-auto mt-4" *@
+    @*                                OnClick="async () => await Check()"> *@
+    @*                         Register *@
+    @*                     </MudButton> *@
+    @*                     <MudButton Variant="Variant.Filled" *@
+    @*                                Color="Color.Error" *@
+    @*                                Size="Size.Small" *@
+    @*                                Class="ml-auto mt-4" *@
+    @*                                DisableElevation="true" *@
+    @*                                OnClick="async () => await Reset()"> *@
+    @*                         Reset *@
+    @*                     </MudButton> *@
+    @*                 </MudForm> *@
+    @*             </MudItem> *@
+    @*             <MudItem xs="12"> *@
+    @*                 <MudPaper Class="p-1"> *@
+    @*                     <MudText>WeeklyDayPrice: @_calculateCheckResponseModel.WeeklyDayPrice</MudText> *@
+    @*                     <MudText>WeeklyDayCount: @_calculateCheckResponseModel.WeeklyDayCount</MudText> *@
+    @*                     <MudText>WeeklyEndPrice: @_calculateCheckResponseModel.WeeklyEndPrice</MudText> *@
+    @*                     <MudText>WeeklyEndCount: @_calculateCheckResponseModel.WeeklyEndCount</MudText> *@
+    @*                     <MudText>UserPhoneNumber: @_calculateCheckResponseModel.UserPhoneNumber</MudText> *@
+    @*                     <MudText>DateTime: @_calculateCheckResponseModel.DateTime</MudText> *@
+    @*                 </MudPaper> *@
+    @*             </MudItem> *@
+    @*         </MudGrid> *@
+    @*     </MudPaper> *@
+    @* </MudItem> *@
+    @* <MudItem xs="12" Class="m-4"> *@
+    @*     <MudText Typo="Typo.h6" Color="Color.Success" Align="Align.Center">Vehicles imported in the last 7 days!</MudText> *@
+    @*     <div> *@
+    @*         <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="IndexCarDiagram" Width="100%" Height="450px" XAxisLabels="@XAxisLabels" ChartOptions="@_options"/> *@
+    @*         <MudGrid> *@
+    @*             <MudItem xs="6"> *@
+    @*                 <MudSlider @bind-Value="_options.YAxisTicks" Min="5" Max="10000" Step="5" Color="Color.Info">Y-Axis Ticks: @_options.YAxisTicks.ToString()</MudSlider> *@
+    @*             </MudItem> *@
+    @*         </MudGrid> *@
+    @*     </div> *@
+    @* </MudItem> *@
 </MudGrid>
 
 @code {
@@ -129,13 +123,13 @@
             var token = await _authenticationStateProvider.GetToken();
             if (string.IsNullOrEmpty(token))
             {
-                errorMessage = "You have not access to use dashboard page!";
+                Navigation.NavigateTo(PageBlazor.LOGIN);
                 return;
             }
         }
         catch (Exception e)
         {
-            errorMessage = "You have not access to use dashboard page!";
+            Navigation.NavigateTo(PageBlazor.LOGIN);
             return;
         }
         _options.YAxisTicks = 5;
@@ -181,7 +175,7 @@
     private async Task Check()
     {
         await form.Validate();
-        if (form.IsValid && _calculateCheckRequestModel.CarId != 0)
+        if (form.IsValid && _calculateCheckRequestModel.CarId != null)
         {
             var response = await _carService.CalculateCheck(_calculateCheckRequestModel, _authenticationStateProvider);
             _calculateCheckResponseModel = response;

@@ -8,7 +8,7 @@
             <MudPaper Class="pa-4">
                 <MudText Align="Align.Center" Class="mb-n4">Car Registration</MudText>
                 <MudForm @ref="@form">
-                    <MudSelect Label="Mark" @bind-Value="_car.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
+                    <MudSelect Label="Марка" @bind-Value="_car.MarkaId" AnchorOrigin="Origin.BottomCenter" T="long" Id=""
                                onchange="@(GetModelByMarkaId(_car.MarkaId))">
                         @foreach (var markaResponsModel in _carMarkaResponsModels)
                         {
@@ -32,7 +32,7 @@
                     <MudTextField @bind-Value="_car.UserPhoneNumber"
                                   For="@(() => _car.UserPhoneNumber)"
                                   Immediate="true"
-                                  Label="UserPhoneNumber"
+                                  Label="Номер телефона"
                                   Id=""/>
 
                     @* _images  *@
@@ -50,20 +50,20 @@
                     }
                     
                     <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="UploadImage">
-                    @* _images  *@
+                        @* _images  *@
                         <ButtonTemplate>
                             <MudButton Class="m-1" HtmlTag="label"
                                        Variant="Variant.Filled"
                                        Color="Color.Primary"
                                        StartIcon="@Icons.Material.Filled.CloudUpload"
                                        for="@context.Id">
-                                Upload Image
+                                Загрузить изображение
                             </MudButton>
                             <MudButton Class="m-1" OnClick="DeleteImage"
                                        Variant="Variant.Filled"
                                        Color="Color.Error"
                                        StartIcon="@Icons.Material.Filled.Clear">
-                                Clear Images
+                                Очистить изображения
                             </MudButton>
                         </ButtonTemplate>
                     </MudFileUpload>
@@ -76,7 +76,7 @@
                         Color="Color.Tertiary"
                         Size="Size.Medium"
                         OnClick="@(async () => await SaveCar())">
-                        Save
+                        Сохранять
                     </MudButton>
                     <MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true"/>
                 </MudCardActions>
@@ -111,9 +111,9 @@
         {
             _car.Images = _imageUrlsForSetToCar;
             var result = await _carService.Post(_car, _authenticationStateProvider);
-            if (result == HttpStatusCode.OK)
+            if (result != null)
             {
-                Navigation.NavigateTo(PageBlazor.CARS);
+                await GenerateQRCode(result);
             }
         }
 
@@ -174,4 +174,89 @@
         Navigation.NavigateTo(PageBlazor.CARS);
     }
 
+    #region QrCode
+
+    private string qrCodeUrl;
+
+    private async Task GenerateQRCode(CarResponseModels model)
+    {
+        if (_car != null)
+        {
+            var markaName = _carMarkaResponsModels!.First(m => m.Id == model.MarkaId).Name ?? "";
+            var modelName = _carModelResponseModels!.First(m => m.Id == model.ModelId).Name ?? "";
+            var parameters = new DialogParameters<ShowDialogForQRCode>();
+            parameters.Add(x => x.MarkaName, markaName);
+            parameters.Add(x => x.ModelName, modelName);
+            parameters.Add(x => x.CarResponseModels, model);
+            var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+            DialogService.Show<ShowDialogForQRCode>("QRCode", parameters, options);          
+        }
+    }
+
+    #endregion
 }
+<script>
+    function printQRCode(markaName, modelName, DateOfPublisher, UserPhoneNumber, DateTime) {
+        const qrCodeImage = document.getElementById('qrCodeImage').src;
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Print QR Code</title>
+                    <style>
+                        body {
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                        }
+                        div {
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                        }
+                        img {
+                            max-width: 100%;
+                            max-height: 100%;
+                        }
+                    </style>
+                </head>
+                <body>
+                        <span style="margin-top: 20px">
+                            <p><strong>User Phone Number:</strong> ${UserPhoneNumber}</p>
+                            <p><strong>Marka:</strong> ${markaName} ${modelName}</p>
+                            <p><strong>DateOfPublisher:</strong> ${DateOfPublisher}</p>
+                            <p><strong>Date Time:</strong> ${DateTime}</p>
+                        </span>
+                        <div style="margin-top: 150px">                        
+                            <img id="printImage" width="350px" height="350px" src="${qrCodeImage}" alt="QR Code"/>
+                        </div>
+                </body>
+            </html>
+        `);
+        
+        // Ensure the image is fully loaded before printing
+        printWindow.document.close();
+        printWindow.onload = function() {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        };
+    }
+</script>
+<style>
+    .qr-code-container {
+        text-align: center; /* Center the content */
+        margin: 20px 0; /* Add some margin for spacing */
+    }
+    
+    .qr-code-image {
+        width: 100%;
+        max-width: 500px; /* Set a maximum width */
+        height: auto; /* Maintain aspect ratio */
+        border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better aesthetics */
+        cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+    }
+</style>

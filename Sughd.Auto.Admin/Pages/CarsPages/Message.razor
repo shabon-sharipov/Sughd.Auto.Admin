@@ -1,0 +1,49 @@
+@page "/message/{carId}"
+<MudText Typo="Typo.h6" Color="Color.Error" Align="Align.Center">@errorMessage</MudText>
+<h3>Информация об автомобиле</h3>
+
+@if (car != null)
+{
+    <h1>Check</h1>
+    <div>
+        <p>
+            <strong>Номер телефона пользователя:</strong> @car.UserPhoneNumber
+        </p>
+        <p><strong>Еженедельный подсчет дней:</strong> @car.WeeklyDayCount x 5 = <strong>Еженедельная дневная цена:</strong> @car.WeeklyDayPrice </p>
+        <p><strong>Еженедельный подсчет конца:</strong> @car.WeeklyEndCount x 10 = <strong>Конечная цена недели:</strong> @car.WeeklyEndPrice </p>
+        <p>
+            <strong>Date Time:</strong> @car.DateTime
+        </p>
+        <p>
+            <strong style="color: red">Итоговая цена:</strong> @totalPrice
+        </p>
+    </div>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    [Parameter] public string CarId { get; set; }
+
+    private string errorMessage = "";
+    private decimal totalPrice = 0;
+    private CalculateCheckResponseModel car = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var requestModel = new CalculateCheckRequestModel()
+        {
+            CarId = Guid.Parse(CarId),
+            WeeklyDayPrice = 5,
+            WeeklyEndPrice = 10
+        };
+
+        car = await _carService.CalculateCheck(requestModel, _authenticationStateProvider);
+
+        totalPrice = car.WeeklyDayPrice + car.WeeklyEndPrice;
+    }
+
+}
+}

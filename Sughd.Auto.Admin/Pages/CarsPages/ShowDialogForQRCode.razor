@@ -1,0 +1,112 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudItem xs="12" Class="p-3 m-2">
+            @if (!string.IsNullOrEmpty(qrCodeUrl))
+            {
+                <div class="qr-code-container">
+                    <h4>Generated QR Code:</h4>
+                    <img id="qrCodeImage" width="450" height="450" class="qr-code-image" src="@qrCodeUrl" alt="QR Code" onclick="printQRCode('@MarkaName', 
+                           '@ModelName', '@CarResponseModels.DateOfPublisher', '@CarResponseModels.UserPhoneNumber', '@DateTime.Now' )"/>
+                </div>
+            }
+        </MudItem>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+    <DialogActions>
+            <MudButton OnClick="Ok">Ok</MudButton>
+        </DialogActions>
+</MudDialog>
+
+@code {
+    private string qrCodeUrl = "";
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public string MarkaName { get; set; }
+    [Parameter] public string ModelName { get; set; }
+    [Parameter] public CarResponseModels CarResponseModels { get; set; }
+   
+    protected override async Task OnInitializedAsync()
+    {
+        qrCodeUrl = CarResponseModels.QRCode;
+    }
+    
+    void Cancel() => MudDialog.Cancel();
+
+    void Ok()
+    {
+        Navigation.NavigateTo(PageBlazor.CARS);
+    }
+}
+
+<script>
+    function printQRCode(markaName, modelName, DateOfPublisher, UserPhoneNumber, DateTime) {
+        const qrCodeImage = document.getElementById('qrCodeImage').src;
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Print QR Code</title>
+                    <style>
+                        body {
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                        }
+                         .image-container {
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;                         
+                        }
+                        img {
+                            max-width: 100%;
+                            max-height: 100%;
+                        }
+                     .centered-content {
+                    text-align: left;
+                    }
+                    </style>
+                </head>
+                <body>
+                    <div class="centered-content">
+                        <span>
+                            <p style="font-size: 20px;"><strong>Номер телефона пользователя:</strong> ${UserPhoneNumber}</p>
+                            <p style="font-size: 20px;"><strong>Марка:</strong> ${markaName} ${modelName}</p>
+                            <p style="font-size: 20px;"><strong>Год выпуска:</strong> ${DateOfPublisher}</p>
+                            <p style="font-size: 20px;"><strong>Date Time:</strong> ${DateTime}</p>
+                        </span>
+                    </div>
+                    </div>
+                        <div class="image-container" style="margin-top: 150px">                        
+                            <img id="printImage" width="350px" height="350px" src="${qrCodeImage}" alt="QR Code"/>
+                        </div>
+                </body>
+            </html>
+        `);
+        
+        // Ensure the image is fully loaded before printing
+        printWindow.document.close();
+        printWindow.onload = function() {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        };
+    }
+</script>
+<style>
+    .qr-code-container {
+        text-align: center; /* Center the content */
+        margin: 20px 0; /* Add some margin for spacing */
+    }
+    
+    .qr-code-image {
+        width: 100%;
+        max-width: 500px; /* Set a maximum width */
+        height: auto; /* Maintain aspect ratio */
+        border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better aesthetics */
+        cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+    }
+</style>

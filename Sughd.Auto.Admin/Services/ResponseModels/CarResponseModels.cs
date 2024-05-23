@@ -5,7 +5,7 @@ public class CarResponseModels
     public long Id { get; set; }
 
     public string DateOfPublisher { get; set; } = string.Empty;
-    
+    public string QRCode { get; set; }
     public bool IsActive { get; set; }
 
     public List<string> Images { get; set; }
@@ -17,4 +17,19 @@ public class CarResponseModels
 
     public string ModelName { get; set; } = string.Empty;
     public long ModelId { get; set; }
+}
+
+public class CarResponseModelsForPDF
+{
+    public long Id { get; set; }
+    
+    public string DateOfPublisher { get; set; } = string.Empty;
+    
+    public string UserPhoneNumber { get; set; }
+
+    public string MarkaName { get; set; } = string.Empty;
+    
+    public string ModelName { get; set; } = string.Empty;
+
+    public decimal Price { get; set; }
 }
