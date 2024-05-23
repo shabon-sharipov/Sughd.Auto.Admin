@@ -18,9 +18,17 @@
                     <MudSelectItem Value="@modelResponseModel.Id">@modelResponseModel.Name</MudSelectItem>
                 }
             </MudSelect>
-            <MudSelect Class="p-2 w-100" Label="Год от" AnchorOrigin="Origin.BottomCenter" IconSize="Size.Small" T="long" Id="">
+            <MudSelect Class="p-2 w-100" Label="Год от" @bind-Value="dateOfPublisherFrom" AnchorOrigin="Origin.BottomCenter" IconSize="Size.Small" T="long" Id="">
+                @foreach (var year in years)
+                {
+                    <MudSelectItem Value="@year">@year</MudSelectItem>
+                }
             </MudSelect>
-            <MudSelect Class="p-2 w-100" Label="Год до" AnchorOrigin="Origin.BottomCenter" IconSize="Size.Small" T="long" Id="">
+            <MudSelect Class="p-2 w-100" Label="Год до" @bind-Value="dateOfPublisherTo" AnchorOrigin="Origin.BottomCenter" IconSize="Size.Small" T="long" Id="">
+                @foreach (var year in years)
+                {
+                    <MudSelectItem Value="@year">@year</MudSelectItem>
+                }
             </MudSelect>
             <MudButton
                 Class="m-1"
@@ -67,6 +75,9 @@
     SearchCarRequestModel _searchCarRequestModel = new();
     protected long markaId = 0;
     protected long modelId = 0;
+    protected long dateOfPublisherFrom = 0;
+    protected long dateOfPublisherTo = 0;
+    List<long> years = new();
     private List<CarMarkaResponsModel> ? _carMarkaResponsModels = new();
     private List<CarModelResponseModel> ? _carModelResponseModels = new();
     private List<CarResponseModels> ? _car = new();
@@ -85,8 +96,9 @@
         {
             Navigation.NavigateTo(PageBlazor.LOGIN);
         }
-        
+
         await GetCarMarka();
+        GetYears();
     }
 
     private async Task GetModelByMarkaId(long markaId)
@@ -104,6 +116,17 @@
             _carModelResponseModels = response;
         }
     }
+
+    private void GetYears()
+    {
+        for (long i = 2024; i >= 1950; i--)
+        {
+            years.Add(i);
+        }
+        
+        years.Insert(0,0);
+    }
+    
     private async Task SaveAsPdf()
     {
         if (_car == null || _car.Count == 0)
@@ -157,17 +180,36 @@
             _searchCarRequestModel.ModelId = modelId;
         }
 
+        if (dateOfPublisherFrom == 0)
+        {
+            _searchCarRequestModel.DateOfPublisherFrom = null;
+        }
+        else
+        {
+            _searchCarRequestModel.DateOfPublisherFrom = dateOfPublisherFrom;
+        }
+        
+        if (dateOfPublisherTo == 0)
+        {
+            _searchCarRequestModel.DateOfPublisherTo = null;
+        }
+        else
+        {
+            _searchCarRequestModel.DateOfPublisherTo = dateOfPublisherTo;
+        }
+
         _car = await _carService.Search(_searchCarRequestModel);
         isVisible = false;
     }
-    
-public class PDF
-{
-    public int Number { get; set; }
-    public long Id { get; set; }
-    public string MarkaName { get; set; }
-    public string ModelName { get; set; }
-    public string DateOfPublisher { get; set; }
-    public string UserPhoneNumber { get; set; }
-}
+
+    public class PDF
+    {
+        public int Number { get; set; }
+        public long Id { get; set; }
+        public string MarkaName { get; set; }
+        public string ModelName { get; set; }
+        public string DateOfPublisher { get; set; }
+        public string UserPhoneNumber { get; set; }
+    }
+
 }
